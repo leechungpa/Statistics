@@ -1,0 +1,28 @@
+---
+layout: page
+title: "데이터 마이닝"
+subtitle: "R을 기반으로"
+author:
+    name: "[이청파](https://github.com/leechungpa/)"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    toc: yes
+    toc_float: true
+    highlight: tango
+    code_folding: hide
+    number_section: true
+    self_contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, echo=F}
+knitr::opts_chunk$set(eval = F)
+```
+
+
+```{r}
+1+2
+```
+
