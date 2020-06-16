@@ -4,7 +4,7 @@ title: "데이터 마이닝"
 subtitle: "R을 기반으로"
 author:
     name: "[이청파](https://github.com/leechungpa/)"
-date: "`r Sys.Date()`"
+date: "최종 수정일 : `r Sys.Date()`"
 output:
   html_document: 
     toc: yes
@@ -29,7 +29,8 @@ knitr::opts_chunk$set(eval = F)
 
 # R 기반의 데이터 마이닝 정리
 
-![](./data/datamining.png)
+![](../data/datamining.png)
+
 설명력 위주 모형 : 통계모형으로 예측력은 떨어지나 모형을 이해하기 좋음 
 
 - X ~ Y 의 인과관계를 얼마나 설명하는지 즉 $R^2$
@@ -69,7 +70,7 @@ $$MAPE = {100\% \over n} \sum (y - \hat y )^2$$
 
 ### Accuracy 계열
 
-![](./data/datamining-accuracy.png)
+![](../data/datamining-accuracy.png)
 모형 작성시 : sensitivity(TPR), specificity(TNR)
 현장 적용시 : PPV, NPV
 
@@ -131,6 +132,9 @@ cf. 이론적 분포함수 : 누적분포함수,  실제 data의 분포함수 : 
 
 
 
+
+
+
 # Regression
 
 ## 모형 만들시 유의사항
@@ -167,7 +171,7 @@ Y의 총 변동량 중에서 X에 의해서 설명된 분량 : 즉 회귀모형�
 
 $R^2$이 1에 가까울 수록 완전히 설명
 
-Adjusted $R^2$ : X변수의 수가 많을수록 좋아지는 $R^2$의 문제를 반영 (overfitting 막음)
+Adjusted $R^2$ : X변수의 수가 많을수록 좋아지는 $R^2$의 overfitting의 문제를 반영
 
 
 ### 모형의 p-value : 회귀모형의 유효성
@@ -199,39 +203,43 @@ $R^2$와 p-value의 관련성
 
 - 정규성 : 오차항의 분포가 평균이 0인 정규성
 
+    - normal QQ plot
+
 - 등분산성 : 오차항의 분산이 동일
 
+    - $\hat{y}$에 따른 잔차 그래프(residuals plot)가 메가폰 형태 같은 것이 없어야 한다.
+
+    - $\hat{y}$ 증가시 $R^2$ 상승의 경우 Y변수 변환 필요 : log(or sqrt) scaling
+
+    - 분산은 일정하나 $\hat{y}$ 증가시 추세가 존재할 경우 추가 X변수 발굴 필요
+
+    
 - 독립성 : 오차항들이 서로 독립
 
-모형 추정 후 오차의 추정치인 잔차를 통해 위의 가정들을 검토 가능
 
-- 잔차분석
 
-- 회귀분석
+잔차 분석 : 모형 추정 후 오차의 추정치인 잔차를 통해 위의 가정들을 검토 가능 
 
-### 정규성
 
-normal QQ plot
+## 모형 고급화 방법 : $R^2$ 증가 방법
 
-### 등분산성 
+유의한 X변수 발굴
 
-$\hat{y}$에 따른 잔차 그래프(residuals plot)가 메가폰 형태 같은 것이 없어야 한다.
+독립적이고 다양한 X변수일 수록 유리
 
-$\hat{y}$ 증가시 $R^2$ 상승의 경우 Y변수 변환 필요 : log(or sqrt) scaling
+범주형 X변수의 교호작용 반영
 
-분산은 일정하나 $\hat{y}$ 증가시 추세가 존재할 경우 추가 X변수 발굴 필요
-
-## 모형 고급화 방법
-
-$R^2$ 증가 방법 : 유의한 X변수 발굴, 독립적이고 다양할수록 유리, 범주형 X변수의 교호작용
 
 ### 변수 선택
 
 중요한 소수의 예측변수를 찾아낸는 것이 중요 : 일반적으로 AIC 기준
 
 - all subsets
+
 - backwrd elimination
+
 - forward selection
+
 - stepwise elimination
 
 
@@ -255,10 +263,11 @@ xyplot(Price~Odometer|Color,data=usedcar2,panel=mypanel)
 가법모형 : 더하기만 있는 형태로 곱하기는 없음
 
 승법모형 : 교호작용과 상호작용 포함
+
     - 고차(교호작용)가 유의하면 저차가 유의하지 않아도 포함 : 즉 교호작용이 유의하면 main effect에서 유의하지 않아도 포함
-    
-    
-참고로 $X$와 $X^2$ 사이의 다중 공산성은 거의 없음 : 다중 공산성은 직선의 관계에서 강하게 발생
+
+    - 참고로 $X$와 $X^2$ 사이의 다중 공산성은 거의 없음 : 다중 공산성은 직선의 관계에서 강하게 발생
+
 
 
 
@@ -269,7 +278,6 @@ xyplot(Price~Odometer|Color,data=usedcar2,panel=mypanel)
 # Logistic Regression
 
 설명력위주의 분류분석 : 종속변수가 범주형 변수
-
 
 
 
@@ -330,15 +338,14 @@ $R^2$가 없으므로, 대신 AUROC 사용
 
 
 
+
 # Decision Tree
+
 분류나무(분류분석)와 회귀나무(회귀분석) 2가지 존재
 
-로지스틱 모형에 비해 더 계산이 빠름 : 신속한 판단 가능
+
 
 의사결정나무는 전체 데이터 집합을 partition
-
-입력변수가 범주형이면 의사결정 나무 유리 : Decision tree는 교호작용을 찾는데 탁월
-(로지스틱 회귀분석은 교호작용의 있을 경우 해석이 어려움)
 
 
 
@@ -347,6 +354,9 @@ R에서 범주형 변수는 자동으로 지시변수로 변환되나, baseline�
 
 
 장점 :
+
+- 로지스틱 모형에 비해 더 계산이 빠름 : 신속한 판단 가능
+
 - 단변량 분할 one varaiable at a time
 
     - small n, large p data 가능
@@ -356,6 +366,11 @@ R에서 범주형 변수는 자동으로 지시변수로 변환되나, baseline�
 -범주형 X변수 처리 용이
 
     - 지시변수 불필요
+
+- 입력변수가 범주형이면 의사결정 나무 유리 : Decision tree는 교호작용을 찾는데 탁월
+
+    - (로지스틱 회귀분석은 교호작용의 있을 경우 해석이 어려움)
+
 
 - 범주들의 대범주화 : 타 분석방법에 앞서 전처리 과정으로 사용가능
 
@@ -392,6 +407,8 @@ R에서 범주형 변수는 자동으로 지시변수로 변환되나, baseline�
 
 
 
+
+
 data를 크게 3개로 분할
 training data
 pruning data : 로지스틱이나 neural network랑 다르게 필요
@@ -408,10 +425,15 @@ CRUISE
 
 
 ## CART 의사결정 나무
+
 binary decisuion rule : 노드가 항상 2개로 분할
+
 숫자형 X변수의 경우 부등호 사용, 범주형 X변수의 경우 부분집합 포함 여부 사용
+
 divide and conqure approach : 분할과 계산 사용
+
 greedy serach using impurity measure : 불순도 이용하여 탐욕적 serach
+
 one variable at a time : 매 분할마다 하나의 X변수만 사용
 
 ### 분할 방법 : 불순도 측정
@@ -467,7 +489,10 @@ tree1 <- rpart(BAD ~ ., data = train, method="class", control=my.control)
 plot(tree1, uniform=T, compress=T, margin=0.05)
 
 ```
+
+
 method = 'class' : 분류나무
+
 method = 'anova' : 회귀나무(Y가 연속형인 경우)
 
 xval : cross-validation으로 몇번 교차검정할지를 의미
@@ -491,7 +516,7 @@ main split과 비슷한 속성이 잇는 것을 surrogate split으로 이용함
 오분류율을 크게 할 위험이 높거나 부적절한 추론규칙을가지고 있는 가지 또는 불필요한 가지 제거
 
 
-정당한 가지크기 결정법
+가지크기 결정법
 
 1. pruning data를 사용
 pruning data는 test데이터가 아닌 다른 데이터
@@ -535,26 +560,29 @@ plotcp(tee1)
 
 
 
+
 # Neural Network
 
-회귀 모형 분류 모형 둘다 가능
+회귀 모형, 분류 모형 둘다 가능
 
 non-linear statistical model
 
 
 universal approximator 범용 근사기 : 선형 + 로지스틱 회귀분석의 일반화라고도 볼 수있음
 
-설명력은 좋지 못하나 예측력은 좋음
-
-해석이 어려움 : sensitivity anlysis를 통해 해석하려는 노력
-
-- 최근에는 XAI (explainable AI)로 SHAP나 LIME 등 해석하기 위한 노력
-
-
 objective function : 오차에 비례 -> 줄어들게 학습함
 
 
+
+
+
+장점
+
+- 예측력은 좋음
+
+
 단점
+
 
 - 추정해야 할 값들이 많음
 
@@ -563,7 +591,7 @@ objective function : 오차에 비례 -> 줄어들게 학습함
 - 학습에 많은 시간이 걸림
 
 
-- black box : not easily interpreted
+- black box : 해석이 어려움
 
 - overfitting의 위험이 큼
 
@@ -575,6 +603,9 @@ objective function : 오차에 비례 -> 줄어들게 학습함
 
 ## sensitivity analysis
 
+NN을 해석하기 위한 방법 : 최근에는 XAI (explainable AI)로 SHAP나 LIME 등 해석하기 위한 노력
+
+
 다변량 분석을 단변량 분석처럼 하기에 추천하지 않는 방법
 
 - 모든 input value의 평균값을 NN모형에 대입
@@ -583,7 +614,9 @@ objective function : 오차에 비례 -> 줄어들게 학습함
 
     - 하나의 x변수를 조금씩 늘려가면서 민감도 그림을 그릴 수 도 있음
     
-sensitive inputs can be treated as important predictors
+
+sensitive inputs을 중요한 변수로 판단함
+
 
 
 
@@ -624,6 +657,7 @@ cross entropy를 작게 만드는 계수 추정
 
 
 
+
 ## 실용적인 tips
 
 ### 단순하면서 예측을 잘하는 모형이 좋은 모형
@@ -633,6 +667,7 @@ cross entropy를 작게 만드는 계수 추정
 - add nodes one at a time, monitoring performance
 
 - stop adding units when the generalization error(일종의 unseen data의 error) begins to increase
+
 
 ### selection of input data
 
@@ -645,6 +680,7 @@ NN는 input data에 매우 민감한 방법
 - 적절한 변수 개수 : not too many/small number of variables
 
 - 범주형 변수는 지시변수를 사용하고, 개수가 지시변수별로 비슷해야 한다.
+
 
 ### 기타
 
@@ -692,28 +728,80 @@ head(pred3$net.result,10)
 뉴럴 네트워크는 초기값을 이용하기에 set.seed로 고정
 
 hidden = c(3,3) : 히든 노드의 수
+
 stepmax = 1e+06 : 반복 최대 횟수 (수렴하지 않으면 stepmax 까지)
+
 threshold = 0.01 : 오차가 수렴하는 조건 (cross entropy < 0.01)
+
 act.fct = 'logistic' : activation 함수
+
 linear.output = F : Y변수가 연속형(회귀분석)이면 T, 분류분석이면 F
 
+
 다른것과 다르게 predict가 아닌 compute를 사용해 예측
+
 covariate = test데이터에서 반응변수를 제외한 행렬
+
+
+
+
+
+
+
+
+
+
 
 # Ensemble Methods
 
-로지스틱은 하나의 관측값이 변해도 큰 차이가 없으나, 뉴럴네트워크나 의사결정나무는 크게 변화한다.
+- 로지스틱 : bias가 크지만 variance는 작음
 
-    - instability : hyperplane의 변동성
-    
-의사결정 나무, 머신러닝 : bias는 작으나 variance가 큼
+    - 하나의 관측값이 변해도 큰 차이 없음
 
-앙상블 : 위의 모형을 이용하여 분산을 줄여 bias와 variance가 작음
+    - likelihood 함수에 의존하여 다양성 확보 어려움
+  
+- 의사결정 나무, 머신러닝 : bias는 작으나 variance가 큼
 
-로지스틱 : bias가 크지만 variance는 작음
+    - 하나의 관측값에도 크게 변화 : instability 즉 hyperplane의 변동성이 크다
+
+    - 다양성 확보 가능
+
+앙상블 : instability가 큰 모델을 여러번 학습하여 bias와 variance를 줄여 오류의 감소 추구
+
+- 분산 감소에 의한 오류 감소 : Bagging, Random Forest
+
+- 편향 감소에 의한 오류 감소 : Boosting(분산도 줄이지만 편향을 더 많이 줄임)
+
+- 분산과 편향 모두 감소에 의한 오류 감소 : Mixture of Exports
+
+**다양성divesity**를 어떻게 확보할 것인지가 중요, 그리고 이를 어떻게 결합aggregate할 것인가 -> 각각의 모델은 성능도 좋으면서 서로 다양한 형태를 나타내는 것이 가장 이상적
 
 
-## bagging : Boostrapping AGGregatING
+
+
+배깅 : 데이터 변형을 통해 tree 생성
+
+부스팅 : 가중치 변형을 통해 tree 생성
+
+
+
+# Bagging : Boostrapping AGGregatING
+
+bagging use unweighted majority voting : 집단지성 아이디어와 유사 -> 분산을 감소시키는 효과
+
+단점
+
+- 해석력을 잃어버림
+
+
+장점
+
+- 예측력을 높임
+
+
+
+
+## 과정
 
 boostrapping : 복원추출
 
@@ -734,14 +822,151 @@ boostrapping : 복원추출
 최종 예측은 각 의사결정나무의 예측결과를 취합하여 생성
 
 
+Bootstrap sample training set : $T^{(1)},\ ...\ , T^{(B)}$
+Classifiers for each sample : $C_1(x,T^{(1)}),\ ...\ , C_B(x,T^{(B)})$
+the number of times that classified as j : $N_j=\sum ^B_{b=1}I[ C_b(x,T^{(b)})=y_j]$
+Bagging : $C(x)=\text{argmax}_jN_j$
 
-bagging 단점 : 해석력을 잃어버림
-대신 예측력을 높임
+
+
+## 코드
+
+```{r}
+library(rpart)
+library(adabag)
+set.seed(1234)
+my.control <- rpart.control(xval=0, cp=0, minsplit=5, maxdepth=10)
+bag.german <- bagging(y ~ ., data = german, mfinal=50, control=my.control)
+summary(bag.german)
+```
+
+bagging을 할 때는 pruning 할 떄는 pruning 하지 않고 tree를 크게 만듦 : 분산이 커져 변동성이 증가하나 bias는 작아짐
+
+xval=0 : cross validation이 0이란 의므로 pruning 하지 않음
+
+mfinal : tree의 개수로 요즘에는 100~200이 기본
+
+
+```{r}
+print(bag.german$importance)
+```
+
+변수 중요도로 숫자의 절대적 의미는 없고 상대적 의미만 있음
+
+비선형 모델의 변수중요도 : 각가의 tree마다의 변수중요도를 통합한 것 -> 이 결과를 NN에도 사용 가능함
+
+
+
+
+
+# Boosting
+
+classification on unequal weighted training data
+
+Put unequal weights on observations so that misclassified observation have higher weight
+Reduce the variance and the bias : bias가 더 크게 감소
+
+
+오분류 관측치의 가중치를 높임 (전체 가중치의 합은 1)
+
+결국 분류경계선 근처의 가중치가 커짐
+
+
+기본아이디어
+perform iteraitve search to locate the regions(examples) that are more difficult to preict -> bias를 줄임
+through each itreation reward accurate predictions on those regions
+combines the rules from each iteration
+
+부스팅의 경우 tree를 작게 만듦
+
+
+종류
+Gradient Boost
+XGBoost
+
+## AdaBoost
+
+
+Idea:
+train a classifier f1 on data,
+then train a f2 to correct the errors of f1,
+then f3 to correct the errors of f2, etc
+
+
+
+과정
+
+Initialized weight : $w_i=1/N$
+
+For m=1 to M
+Fit a classifier $C_m(x)$ to T using weight
+compute $err_m={\sum^N_{i=1}w_iI(y_i\not= C_m(X)i)) \over \sum^N_{i=1}w_i}$ : 오분류시 I=1
+compute $\alpha_m=log((1-err_m)/err_m)$ : tree의 가중치 -> error가 적으면 $\alpha$상승
+set $w_i=w_i\ \text{exp}[\alpha_mI(y_i\not= C_m(X_i))]$
+$\sum w_i=1$이 되게 조정
+
+Outpout $C_{AD}(X)=sign[\sum^M_{m=1}\alpha_mC_M(X)]$
+
+즉 bagging은 tree당 같은 가중치이지만, ADaboost는 tree별로 다른 가중치$\alpha_m$를 반영
+
+
+```{r}
+library(rpart)
+library(adabag)
+set.seed(1234)
+my.control <- rpart.control(xval=0, cp=0, maxdepth=1)
+boo.german <- boosting(y ~ ., data = german, boos=T, mfinal=100, control=my.control)
+```
+
+xval=0 : 푸루닝 하지 않음
+maxdepth=1 : 분할 한번뿐 -> 일반적으로 boosting은 작을 수록 좋음 (보통 1~4)
+boos=T : 가중치 반영시 bootstrap에서 가중치 높은 것을 여러번 더 뽑을 수 있게 하면 AdaBoost 방법을 이용해 boosting 할 수 있다.
+
+
+
+train set과 test set을 7대3으로 분할하면 그 속성이 남아 있게되므로, 이러한 분할도 여러번 해보는 것이 좋음
+
+
+
+## Gradient Boost
+
+$Y=h_1(X)+err1$에서 $err1=h_2(X)+err2$하는 형식으로 error 를 바탕으로 boosting을 계속하는 방법 : $F_m(X)=F_{m-1}(X)+w_mh_m(X)$
+
+Gredient Descent 알고리즘으로 최적 weight 계산
+
+각 함수별 최적 weight 찾으면 예측 정확도는 더 높아짐
+
+
+
+
+
+
+
 
 
 # Random Forest
 
+의사결정나무를 이용한 배깅의 특수한 형태를 취하는 앙상블 기법
+
+랜덤포레스트는 앙상블의 다양성 확보하기 위해 특별한 방법을 사용 : 변수의 임의 추출
+
+즉 random forest : 배깅의 boostrap + 변수 임의 추출
+
+
+과정
+
+- boostrap 적용 : bagging과 동일
+
+- 변수의 부분집합 선택을 통한 다양성 확보 : X변수중 random하게 일부만 greedy search
+
+     - 즉 decision tree에서 분할시 분할에 greedy search하게 되는 x변수가 매번 random하게 정해짐
+     
+     - 여러번 해도 모든 변수를 greedy search하면 중요한 변수는 뿌리 노드 근처에 자주 나옴
+
+- 
+
 
 # Unsupervised Learnging - clustering
+
 
 
