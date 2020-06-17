@@ -963,10 +963,85 @@ Gredient Descent 알고리즘으로 최적 weight 계산
      
      - 여러번 해도 모든 변수를 greedy search하면 중요한 변수는 뿌리 노드 근처에 자주 나옴
 
-- 
 
 
-# Unsupervised Learnging - clustering
+### 변수의 임의추출
+
+bootstrapping과 predictor subset selection을 동시에 적용하여 개별 tree의 **다양성을 극대화**
+
+트리들이 **서로 독립이** 되도록 하고자 함
+
+각 노드를 분할할 때, p개의 변수 중에서 탐색하지 않고, m개 (m<p)의 변수 중에서 탐색하여 분할함 (m=p이면 배깅과 동일)
+
+m의 값이 작으면 각 나무모형들 간의 상관관계가 감소함 (m이 너무 적으면 정확도가 낮아짐)
+
+보통 분류 data인 경우 $m=\sqrt{p}$. 회귀 data인 경우 $p\over 3$
+
+### 개별 모델의 결과 취합
+
+Result aggregating for classification problem
+
+majority voting : $\hat{Y}_{Ensemble}=\text{argmax}_i(\sum_{j=1}^n\delta({Y}_j=i),\ i\in\{0,1\})$
+
+
+weighted voting : $\hat{Y}_{Ensemble}= \text{argmax}_i({\sum_{j=1}^n(TrnAcc_j)\delta(Y_j=i)\over\sum_{j=1}^n(TrnAcc_j)},\ i\in\{0,1\})$
+
+    - weight $TrnAcc_j$ : training accuracy of individual models
+
+weighted voting : $\hat{Y}_{Ensemble}= \text{argmax}_i({\sum_{j=1}^nP(Y_j=i)/n},\ i\in\{0,1\})$
+
+    - weight : predicted probability for each class
+
+
+## OOB Error : out of bag error
+
+개별 학습 데이터 섹 구성시 bootstrap 되지 않은 개체들을 검증용으로 사용
+
+이 값을 test 데이터로 삼으면, test error가 계산됨
+
+
+## 변수 중요도
+
+다중선형 회귀분석, 로지스틱 회귀분석과는 달리 개별 변수가 통계적으로 얼마나 유의한지에 대한 정보를 제공하지 않음 : 즉 p-value 없음
+
+대신 간접적인 방식으로 추정 : 절대적인 개념이 아니라 상대적인 개념
+
+1. 원래 OOB 데이터 집합에 대해서 OOB Error 구함 : OOB Error $e_j$ where j 는 1부터 m개 까지의 각각의 tree
+
+2. 특정 변수의 값을 임의로 뒤섞은 random permutation OOB 데이터 집합에 대해서 OOB Error를 구함 : permutaion OOB Error $p_j$
+
+    - 다른 X변수와 Y변수를 제외하고 특정 X변수 하나만의 순서를 임의로 바꿈 : 해당 특정 X변수가 noise 변수가 됨
+
+3. 개별 변수의 중요도는 2단계와 1단계 OOB Error 차이의 평균과 분산을 고려하여 추정
+
+i번째 변수의 변수 중요도 : $v_i={\bar{d}\over s_d}$ wherw $\bar{d}=\sum_{j=1}^md_j/m$, $s_d^2=\sum_{j}^{m-1}(d_j-\bar{d})^2/(m-1)$
+
+    - 위 오류율의 차이가 클수록 해당변수가 tree에서 중요한 역할을 한다.
+    
+    - 오류율의 차이를 모든 트리에 대하여 평균/표준편차를 계산한다.
+    
+    - 이 값이 RF의 변수중요도
+
+다른 모형에서도 OOB를 활용한 변수중요도개념 자주 활용
+
+
+
+
+
+
+
+
+#  clustering
+
+Unsupervised Learnging
+
+군집화의 기준 : 동일한 군집에 속하면 여러 속성이 비슷하고, 다른군집에 속한 관측치는 그렇지 않음
+
+얼마나 유사한지 비유사한지 측도 필요 : 유사성보다는 비유사성dissimilarity를 기준으로 하여 distance 사용
+
+
+
+X 변수 대부분 연속형이어야 함 : distance를 사용하므로 범주형의 경우 계산 불가 (지시변수도 가능하나 좋지 못한 방법)
 
 
 
