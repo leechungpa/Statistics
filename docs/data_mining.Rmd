@@ -521,7 +521,7 @@ main split과 비슷한 속성이 잇는 것을 surrogate split으로 이용함
 
 
 
-## pruning 가지치기
+## Pruning 가지치기
 
 오분류율을 크게 할 위험이 높거나 부적절한 추론규칙을가지고 있는 가지 또는 불필요한 가지 제거
 
@@ -580,9 +580,6 @@ non-linear statistical model
 
 universal approximator 범용 근사기 : 선형 + 로지스틱 회귀분석의 일반화라고도 볼 수있음
 
-objective function : 오차에 비례 -> 줄어들게 학습함
-
-
 
 
 
@@ -631,7 +628,7 @@ sensitive inputs을 중요한 변수로 판단함
 
 
 
-## hidden nodes는 2개로 구성되어 있음 : combination function + activation function 활성함수
+## hidden nodes는 : combination function + activation function 활성함수
 
 
 activaition (squashing) function으로 보통 sigmoid(logitstic)과 hypertangent functions 사용
@@ -655,7 +652,10 @@ classification purpose : sigmoid function 사용 (확률로 변환하여야 함)
 
 
 
-### training the networks
+## training the networks
+
+objective function : 오차에 비례 -> 줄어들게 학습함
+
 
 cross entropy를 작게 만드는 계수 추정
 
@@ -670,7 +670,7 @@ cross entropy를 작게 만드는 계수 추정
 
 ## 실용적인 tips
 
-### 단순하면서 예측을 잘하는 모형이 좋은 모형
+1. 단순하면서 예측을 잘하는 모형이 좋은 모형
 
 먼저 통계모형을 사용해(no hidden layer) 만들어 보기
 
@@ -679,7 +679,7 @@ cross entropy를 작게 만드는 계수 추정
 - stop adding units when the generalization error(일종의 unseen data의 error) begins to increase
 
 
-### selection of input data
+2. selection of input data
 
 NN는 input data에 매우 민감한 방법
 
@@ -692,7 +692,7 @@ NN는 input data에 매우 민감한 방법
 - 범주형 변수는 지시변수를 사용하고, 개수가 지시변수별로 비슷해야 한다.
 
 
-### 기타
+3. 기타
 
 NN train best when all the input and output values are between 0~1 or -1~1
 
@@ -720,6 +720,7 @@ NN train best when all the input and output values are between 0~1 or -1~1
 
 
 ## 코드
+
 ```{r}
 library(neuralnet)
 set.seed(1234)
@@ -797,7 +798,7 @@ covariate = test데이터에서 반응변수를 제외한 행렬
 
 # Bagging : Boostrapping AGGregatING
 
-bagging use unweighted majority voting : 집단지성 아이디어와 유사 -> 분산을 감소시키는 효과
+classification on unweighted majority voting : 집단지성 아이디어 -> 분산을 감소시키는 효과
 
 단점
 
@@ -813,29 +814,21 @@ bagging use unweighted majority voting : 집단지성 아이디어와 유사 -> 
 
 ## 과정
 
-boostrapping : 복원추출
+1. 전체 데이터 집합에서 각 학습 데이터 셋을 boostrapping 즉 복원추출하여 원래 데이터 수만큼 크기를 갖도록 생성
 
-- sample을 복원추출하여 이를 바탕으로 각각 의사결정 나무 시행
+    - Bootstrap sample training set 복원추출된 데이터셋 : $T^{(1)},\ ...\ , T^{(B)}$
 
-- 다수결의 방법을 통해 결과 취합
+2. boostrap을 바탕으로 의사 결정 나무 시행, 이 과정을 반복
 
-즉 bagging을 통해 분산을 줄임
+    - Classifiers for each sample : $C_1(x,T^{(1)}),\ ...\ , C_B(x,T^{(B)})$
 
+    - 각 의사결정나무는 서로 다른 학습 데이터셋을 사용하게 됨
+  
+3. 최종 예측은 각 의사나무의 예측 결과를 다수결의 방법을 통해 취합 -> 분산 감소
 
+    - number of times that classified as j : $N_j=\sum ^B_{b=1}I[ C_b(x,T^{(b)})=y_j]$
 
-각 학습 데이터셋은 전체 데이터 집합에서 복원추출을 통해 원래 데이터 수만큼의 크기를 갖도록 생성
-
-이렇게 복원추출된 데이터셋을 boostrap이라 명명
-
-각 의사결정나무는 서로 다른 학습 데이터셋을 사용하여 구축됨
-
-최종 예측은 각 의사결정나무의 예측결과를 취합하여 생성
-
-
-Bootstrap sample training set : $T^{(1)},\ ...\ , T^{(B)}$
-Classifiers for each sample : $C_1(x,T^{(1)}),\ ...\ , C_B(x,T^{(B)})$
-the number of times that classified as j : $N_j=\sum ^B_{b=1}I[ C_b(x,T^{(b)})=y_j]$
-Bagging : $C(x)=\text{argmax}_jN_j$
+    - Bagging : $C(x)=\text{argmax}_jN_j$
 
 
 
@@ -850,7 +843,7 @@ bag.german <- bagging(y ~ ., data = german, mfinal=50, control=my.control)
 summary(bag.german)
 ```
 
-bagging을 할 때는 pruning 할 떄는 pruning 하지 않고 tree를 크게 만듦 : 분산이 커져 변동성이 증가하나 bias는 작아짐
+bagging을 할 때는 pruning 하지 않고 tree를 크게 만듦 : 분산이 커져 변동성이 증가하나 bias는 작아짐
 
 xval=0 : cross validation이 0이란 의므로 pruning 하지 않음
 
@@ -863,7 +856,7 @@ print(bag.german$importance)
 
 변수 중요도로 숫자의 절대적 의미는 없고 상대적 의미만 있음
 
-비선형 모델의 변수중요도 : 각가의 tree마다의 변수중요도를 통합한 것 -> 이 결과를 NN에도 사용 가능함
+비선형 모델의 변수중요도 : 각각의 tree마다의 변수중요도를 통합한 것 -> 이 결과를 NN에도 사용 가능함
 
 
 
@@ -873,52 +866,54 @@ print(bag.german$importance)
 
 classification on unequal weighted training data
 
-Put unequal weights on observations so that misclassified observation have higher weight
-Reduce the variance and the bias : bias가 더 크게 감소
-
-
-오분류 관측치의 가중치를 높임 (전체 가중치의 합은 1)
-
-결국 분류경계선 근처의 가중치가 커짐
-
-
-기본아이디어
-perform iteraitve search to locate the regions(examples) that are more difficult to preict -> bias를 줄임
-through each itreation reward accurate predictions on those regions
-combines the rules from each iteration
-
 부스팅의 경우 tree를 작게 만듦
 
 
-종류
-Gradient Boost
-XGBoost
+종류 : AdaBoost, Gradient Boost, XGBoost
+
+## 과정
+
+1. 오분류 관측치의 가중치를 높임 (전체 가중치의 합은 1)
+
+2. 가중치를 반형하여 분류를 하고, 계속 오분류를 찾고 가중치를 높이는 과정을 반복
+
+    - 분류경계선 근처의 가중치가 커짐
+
+3. 각각의 분류를 합해 최종 분류를 계산
+
+    - 결국 variance와 bias 감소 (bias가 더 크게 감소)
+
 
 ## AdaBoost
 
 
-Idea:
-train a classifier f1 on data,
-then train a f2 to correct the errors of f1,
-then f3 to correct the errors of f2, etc
 
 
+### 과정
 
-과정
+1. 먼저 초기 가중치를 줌
 
-Initialized weight : $w_i=1/N$
+    - Initialized weight : $w_i=1/N$
 
-For m=1 to M
-Fit a classifier $C_m(x)$ to T using weight
-compute $err_m={\sum^N_{i=1}w_iI(y_i\not= C_m(X)i)) \over \sum^N_{i=1}w_i}$ : 오분류시 I=1
-compute $\alpha_m=log((1-err_m)/err_m)$ : tree의 가중치 -> error가 적으면 $\alpha$상승
-set $w_i=w_i\ \text{exp}[\alpha_mI(y_i\not= C_m(X_i))]$
-$\sum w_i=1$이 되게 조정
+2. 가중치를 사용하여 분류하며 가중치를 변경하는 과정 i=1를 i=M까지 반복
 
-Outpout $C_{AD}(X)=sign[\sum^M_{m=1}\alpha_mC_M(X)]$
+- 가중치 $w_i$를 이용하여 classifier $C_m(x)$ 생성
 
-즉 bagging은 tree당 같은 가중치이지만, ADaboost는 tree별로 다른 가중치$\alpha_m$를 반영
+- 오차인 $err_m={\sum^N_{i=1}w_iI(y_i\not= C_m(X)i)) \over \sum^N_{i=1}w_i}$ 를 계산
 
+    - 오분류시 $I(y_i\not= C_m(X_i))=1$, 정분류시 $I(y_i\not= C_m(X_i))=0$
+
+- tree의 가중치인 $\alpha_m=log((1-err_m)/err_m)$ 를 계산
+
+    - error가 적으면 $\alpha$상승
+    
+- 새로운 가중치 생성 $w_i=w_i\ \text{exp}[\alpha_mI(y_i\not= C_m(X_i))]$
+
+- 새로운 가중치의 합이 1이되도록 조정 : $\sum w_i=1$
+
+3. 반복한 분류를 가중치를 반영하여 최종 분류를 만듦 $C_{AD}(X)=sign[\sum^M_{m=1}\alpha_mC_M(X)]$
+
+    - 즉 bagging은 tree당 같은 가중치이지만, Adaboost는 tree별로 다른 가중치$\alpha_m$를 반영
 
 ```{r}
 library(rpart)
@@ -940,7 +935,9 @@ train set과 test set을 7대3으로 분할하면 그 속성이 남아 있게되
 
 ## Gradient Boost
 
-$Y=h_1(X)+err1$에서 $err1=h_2(X)+err2$하는 형식으로 error 를 바탕으로 boosting을 계속하는 방법 : $F_m(X)=F_{m-1}(X)+w_mh_m(X)$
+$Y=h_1(X)+err1$에서 오류를 다시 $err1=h_2(X)+err2$와같이 분류하는 형식 : 즉 error를 바탕으로 boosting을 계속하는 방법
+
+$F_m(X)=F_{m-1}(X)+w_mh_m(X)$
 
 Gredient Descent 알고리즘으로 최적 weight 계산
 
@@ -956,14 +953,29 @@ Gredient Descent 알고리즘으로 최적 weight 계산
 
 # Random Forest
 
-의사결정나무를 이용한 배깅의 특수한 형태를 취하는 앙상블 기법
+random forest : 배깅의 boostrap + 변수 임의 추출
 
-랜덤포레스트는 앙상블의 다양성 확보하기 위해 특별한 방법을 사용 : 변수의 임의 추출
+변수의 임의 추출을 통해 다양성 확보
 
-즉 random forest : 배깅의 boostrap + 변수 임의 추출
+- bootstrapping과 predictor subset selection을 동시에 적용하여 개별 tree의 **다양성을 극대화**
+
+- tree들이 **서로 독립이** 되도록 하고자 함
+
+- 각 노드를 분할할 때, p개의 변수 중에서 탐색하지 않고, m개 (m<p)의 변수 중에서 탐색하여 분할함
+
+    - m=p이면 배깅과 동일
+
+- m의 값이 작으면 각 나무모형들 간의 상관관계가 감소함 -> m이 너무 적으면 정확도가 낮아짐
+
+- 일반적인 앙상블의 크기 m
+
+    - 보통 분류 data인 경우 $m=\sqrt{p}$
+
+    - 회귀 분류 data인 경우 $p\over 3$
 
 
-과정
+
+## 과정
 
 - boostrap 적용 : bagging과 동일
 
@@ -975,19 +987,7 @@ Gredient Descent 알고리즘으로 최적 weight 계산
 
 
 
-### 변수의 임의추출
-
-bootstrapping과 predictor subset selection을 동시에 적용하여 개별 tree의 **다양성을 극대화**
-
-트리들이 **서로 독립이** 되도록 하고자 함
-
-각 노드를 분할할 때, p개의 변수 중에서 탐색하지 않고, m개 (m<p)의 변수 중에서 탐색하여 분할함 (m=p이면 배깅과 동일)
-
-m의 값이 작으면 각 나무모형들 간의 상관관계가 감소함 (m이 너무 적으면 정확도가 낮아짐)
-
-보통 분류 data인 경우 $m=\sqrt{p}$. 회귀 data인 경우 $p\over 3$
-
-### 개별 모델의 결과 취합
+## 개별 모델의 결과 취합
 
 Result aggregating for classification problem
 
@@ -1041,61 +1041,65 @@ i번째 변수의 변수 중요도 : $v_i={\bar{d}\over s_d}$ wherw $\bar{d}=\su
 
 
 
-#  clustering
+#  Clustering
 
 Unsupervised Learnging
 
-군집화의 기준 : 동일한 군집에 속하면 여러 속성이 비슷하고, 다른군집에 속한 관측치는 그렇지 않음
-
-얼마나 유사한지 비유사한지 측도 필요 : 유사성보다는 비유사성dissimilarity를 기준으로 하여 distance 사용
-
-
-
 X 변수 대부분 연속형이어야 함 : distance를 사용하므로 범주형의 경우 계산 불가 (지시변수도 가능하나 좋지 못한 방법)
 
+군집분석은 자료 사이의 거리를 이용하여 수행되기 때문에, 각 자료의 단위가 결과에 큰 영향을 미친다. ->  반드시 표준화 standardization 필요
 
+## 표준화 standardization
 
-군집분석시 반드시 표준화 standardization 필요
+1. 관측치 표준화
 
-군집분석은 자료 사이의 거리를 이용하여 수행되기 때문에, 각 자료의 단위가 결과에 큰 영향을 미친다. -> 표준화 방법 :  각 변수의 관찰값으로부터 그 변수의 평균을 빼고, 그 변수의 표준편차로 나누는 것
+- 관측치가 사람의 경우 관측치 표준화 불필요
 
-표준화된 자료는 모든 변수가 평균이 0이고 표준편차가 1이 된다.
+- 파생변수로 관찰치 표준화가능
 
-1. 관찬치 표준화
+    - 파생변수 생성시 비율의 경우 관려적으로 log 취함
+
 
 2. 변수 표준화
 
+- 각 변수의 관찰값으로부터 그 변수의 평균을 빼고, 그 변수의 표준편차로 나누는 것
+
+- 표준화된 자료는 모든 변수가 평균이 0이고 표준편차가 1
+
+
+## 군집화의 기준 : distance
+
+- 동일한 군집에 속하면 여러 속성이 비슷하고, 다른군집에 속한 관측치는 그렇지 않음
+
+- 유사성보다는 비유사성dissimilarity를 기준으로 하여 distance 사용
 
 
 
 
 
 
+## distance measures
 
-### distance measures
-
-유클리드 Euclidean 거리 : $d(x,y)=(\sum_{i=1}^p(x_i-y_i)^2)^{1/2}$ when p=2 (x, y)
+1. 유클리드 Euclidean 거리 : $d(x,y)=(\sum_{i=1}^p(x_i-y_i)^2)^{1/2}$ when p=2 (x, y)
 
 - pairwise 거리
 
-Minkowski 거리 : $d(x,y)=(\sum_{i=1}^p(x_i-y_i)^m)^{1/m}$
+2. Minkowski 거리 : $d(x,y)=(\sum_{i=1}^p(x_i-y_i)^m)^{1/m}$
 
-- 일반화된 형태
-
-- m = 2 이면 Euclidean
+- 일반화된 형태로, m = 2 이면 Euclidean
 
 
 
-Manhalanobis 거리 : $d(x,y)=\sqrt{(x-y)^TS^{-1}(x-y)}$
+3. Manhalanobis 거리 : $d(x,y)=\sqrt{(x-y)^TS^{-1}(x-y)}$
 
 
 - 공분산행렬 S : correlation 반영 - 다른 거리와 다르게 ind 가정 없어서 이론적으로는 가장 우월하나 실제 s 계산이 어려움
 
-Manhattan Distance : $d_{Manhattan}(x,y)=\sum^p_{i=1}|x-y|$
+4. Manhattan Distance : $d_{Manhattan}(x,y)=\sum^p_{i=1}|x-y|$
 
 
 
-## Hierarchical clustering 계층적 군집분석
+# Hierarchical clustering 계층적 군집분석
 
 
 nC2 즉 $n^2$에 비례하여 계산량 증가
@@ -1117,35 +1121,23 @@ nC2 즉 $n^2$에 비례하여 계산량 증가
 - 이상치에 대한 사전검토 필요, Centroid 방법이 이상치에 덜 민감함
 
 
-### 과정
+## 과정
 
 
-1. 먼저 표본수 그대로인 1개의 entity를 가지는 N 개의 군집으로 시작하여, NxN symmetric matrix of distances를 생성 : $D=\{d_{ik}\}$
+1. 1개의 entity를 가지는 관측치 그대로인 N개의 군집으로 시작
 
-2. distance matrix D의 원소중 가장 가까운 군집의 쌍 U와 V를 찾아 (UV)라는 하나의 군집으로 합침
+2. NxN symmetric 거리 행렬 $D=\{d_{ik}\}$을 생성
 
+3. 거리행렬 D의 원소중 가장 가까운 군집의 쌍 U와 V를 찾아 (UV)라는 하나의 군집으로 합침
 
-3.  distance matrix d중 새롭게 변화 되는 부분인 distance between (UV) and other cluster W를 바꿈 : change $d_{(UV)W}$
+4. 거리행렬 D중 새롭게 변화 되는 부분인 (UV) 와 다른 군집 W 사이의 거리 $d_{(UV)W}$를 계산
 
-4. 위의 과정을 N-1 반복하여 모든 관측치가 하나의 군집으로 바꿈
+5. 위의 과정을 N-1 반복하여 모든 관측치가 하나의 군집으로 바꿈
 
-Record the identity of clusters that are merged and the levels at which the mergers take place.
-
-
-
+6. Dendro gram을 활용 : 어느 levels에서 어떻게 결합되어있는지 판단
 
 
-
-
-### dendrogram 고드름 그림
-
-계층적 군집분석에만 dendrogram이 있음
-
-a graphical tool to ilustrate the merges or divisions
-
-
-
-### 계층적 군집분석의 종류
+## 계층적 군집분석 종류 (위의 4번)
 
 1. single linkage 단일연결법 : mininmum distance or nearast neighbor
 
@@ -1166,7 +1158,19 @@ $d_{(UV)W}=\text{distance between the centroids of cluster UV and W}$
 
 5. Ward's Method
 
-### 코드
+
+
+
+
+## dendrogram 고드름 그림
+
+계층적 군집분석에만 dendrogram이 있음
+
+a graphical tool to ilustrate the merges or divisions
+
+
+
+## 코드
 
 scale : (변수) 표준화
 
@@ -1183,16 +1187,41 @@ cutree : 군집별 번호 매김
 
 
 
-## K-means clustering
+# K-means clustering
 
-사전에 결정된 군집수 k에 기초하여 전체 데이터를 상대적으로 유사한 k개의 군집으로 구분한다.
-
-사전에 k 결정 : 단점
+사전에 결정된 군집수 k에 기초하여 전체 데이터를 상대적으로 유사한 k개의 군집으로 구분
 
 
+단독군집이 잘 안나옴
 
 
-### 알고리즘
+장점
+
+- 신속한 계산결과로 대용량 데이터에 적합함
+
+- 군집분석 이외에도 분류,예측을 위한 선행작업, 이상치 처리작업등 다양한 분석에 사용 : 정제 천처리 등
+
+
+- 계산속도가 빠르다 : n에 비례
+
+    - 일반적으로 3번 정도 반복 -> 3nk
+
+
+
+
+단점
+
+- 사전에 군집수 K를 결정하기 어려움 : 주관적 선택 필요
+
+- 군집결과의 해석이 용이하지 않을 수 있음 (계층적 분석은 해석에 용이)
+
+- 초기값에 영향을 많이 받음(일반적으로 k-means는 군집수가 비슷하게 나옴) : 초기값을 잘못 정하면 잘못된 결과 가능
+
+
+
+
+
+## 과정
 
 1. 군집수 k를 결정한다.
 
@@ -1200,130 +1229,52 @@ cutree : 군집별 번호 매김
 
 3. 각 관찰치를 그 중심과 가장 가까운 거리에 있는 군집에 할당한다.
 
-4. 형성된 군집의 중심을 계산한다.
+4. 형성된 군집의 중심을 계산 : K-means 는 mean을 사용
 
 5. 3-4의 과정을 기존의 중심과 새로운 중심의 차이가 없을 때까지 반복한다. -> 재할당
 
-군집별로 centroid 하여 새 군집의 초기값 설정 -> 재할당 반복
 
 
 
-단독군집이 잘 안나옴
 
+## K 결정법
 
-
-### Determination of K
 K-평균 군집분석법의 결과는 초기 군집수 k의 결정에 민감하게 반응한다.
 
 1. 여러 가지의 k값을 선택하여 군집분석을 수행한 후 가장 좋다고 생각되는 k값을 이용
 
-Elbow point 계산하여 K 선택
-Silhouette plot 으로 K 선택
+- Elbow point 계산하여 K 선택
+
+- Silhouette plot 으로 K 선택
+
+2. 자료의 시각화를 통하여 K를 결정 : 시각화된 그래프를 보고 군집의 수를 판단
+
+- 자료의 시각화를 위하여는 차원의 축소가 필수적 : PCA 사용
 
 
 
-2. 자료의 시각화를 통하여 K를 결정. : 시각화된 그래프를 보고 군집의 수를 판단
-
-자료의 시각화를 위하여는 차원의 축소가 필수적이고, 이를 위하여 주성분 분석PCA방법이 널리 사용된다.
-
-
-
-3. 대용량데이터에서 sampling한 데이터로 계층적 군집분석을 우선 수행하여, K의 값을 선택
+3. 빅데이터에서 sampling한 데이터로 계층적 군집분석을 우선 수행하여, K의 값을 선택
 
 - 계층적 군집분석 : 소용량 데이터만 가능
+
 - 이를 바탕으로 k-means clustering 실행
 
 
 
 
 
+## Elbow Point
 
+K를 결정하기 위한 한 방법으로 K-means에 적합함
 
-
-
-K-means defines a prototype in terms of a centroid, usually the mean of a group of points.
-
-
-
-장점
-- 신속한 계산결과로 대용량 데이터에 적합함
-- 군집분석 이외에도 분류,예측을 위한 선행작업, 이상치 처리작업등 다양한 분석에 사용 : 정제 천처리 등
-
-
-- 계산속도가 빠르다 : n에 비례
-일반적으로 3번 정도 반복 -> 3nk
-
-
-
--초기값에 영향을 많이 받음 : 초기 값이 다르면 다른 결과 가능
-
-단점
-- 초기 군집수 K를 결정하기 어려움 : 주관적 선택 필요
-- 군집결과의 해석이 용이하지 않을 수 있음 (계층적 분석은 해석에 용이)
-
-
-
-일반적으로 k-means는 군집수가 비슷하게 나옴 : 초기값을 잘못 정하면 잘못된 결과 가능
-
-
-
-
-거리에 기반한 방법으로 표준화 필수
-
-
-
-
-관측치가 사람의 경우 관측치 표준화 불필요
-
-파생변수로 관찰치 표준화가능
-
-
-파생변수 생성시 비율의 경우 관려적으로 log 취함
-
-### Elbow Point
-
-K를 결정하기 위한 한 방법
-
-K-means 에 적합함
-
-Within group sum of squares by cluster : 군집중심과 군집내 관찰값 간의 거리제곱의 합
-
-급격히 감소하다 완만해지는 부분이 elbow point
-
-
-
-### 코드
-
-```{r}
-
-# kmeans(, centers-)
-```
-centers = : 인위적인 초기값
+```r Within group sum of squares by cluster```즉 군집중심과 군집내 관찰값 간의 거리제곱의 합이 급격히 감소하다 완만해지는 부분이 elbow point
 
 
 
 
 
-## K-medioid clustering
-K-medoid defines a prototype in terms of a medoid
+## silhouette
 
-medoid: the object whose average dissimilarity to all the objects in the cluster is minimal. i.e. it is the most centrally located point in the cluster 변수별 중앙값의 좌표(다변량)
-
-more robust to noise and outliers because it minimizes a sum of pairwise dissimilarities instead of a sum of squared Euclidean distances.
-
-
-```{r}
-pamk()
-```
-
-k=2~10을 해보고 silhouette을 바탕으로 최적을 찾음
-
-args를 k=4로 지정 가능
-
-
-
-
-### silhouette
 
 $$s(i)=
 {b(i)-a(i)\over \text{max}\{a(i),b(i)\}}=
@@ -1331,8 +1282,8 @@ $$s(i)=
 1-a(i)/b(i)\ , & \mbox{if }a(i)<b(i) \\
 0\ , & \mbox{if }a(i)=b(i) \\
 b(i)/a(i)-1\ , & \mbox{if }a(i)>b(i)
-\end{cases}
-$$
+\end{cases}$$
+
 분모의 max : 관찰치의 수가 많을 수록 s(i)가 커지는 것을 방지
 
 1에 가까울수록 군집화가 잘 된 관찰값임
@@ -1360,31 +1311,71 @@ average silhouette wideth : 0.## -> 평균 silhouette를 의미
 해석의 용의성은 K=4가 좋으나 성능은 K=2 경우 무엇을 선택할지?
 
 
-## Density-based clustering
+
+### 코드
+
+```{r}
+
+# kmeans(, centers-)
+```
+centers = : 인위적인 초기값
 
 
-Idea: group objects into one cluster if they are connected to one another by densely populated area : 이전에는 거리기반, 여기서는 밀도기반
 
-Two parameters
+
+
+## K-medioid clustering
+
+K-means와 비슷하나 중심화 할때 medoid 사용
+
+medoid : the object whose average dissimilarity to all the objects in the cluster is minimal. 즉 변수별 중앙값의 좌표(다변량)
+
+Euclidean distances가 아니기에 outlier에 robust함
+
+
+## 코드
+
+```{r}
+pamk()
+```
+
+k=2~10을 해보고 silhouette을 바탕으로 최적을 찾음
+
+args를 k=4로 지정 가능
+
+
+
+# Density-based clustering
+
+
+이전과 다르게 밀도 기반 군집 분석 : group objects into one cluster if they are connected to one another by densely populated area
+
+
+- 2개의 모수
+
 1. Eps : size of neighborhood (반지름)
+
     - 반지름 안에 포함되는 point를 중심으로 또다시 반지름 -> 점들이 게속 연결되어 군집이 커짐
+    
 2. MinPts : minimum # of points 즉 최소 데이터 수
 
-A point q is dense point 기준점 if the # in the neighborhood is larger than Min Points
 
 
-The neighborhood are put into the same cluster as q
+- dense point 기준점 : Min Points보다 neighborhood 안에 점이 더 많을때
 
 
+- 기준점에 속하는 neighborhood를 하나의 군집으로 분류
 
-
-어떠한 군집에도 속하지 않은 데이터는 noise, outlier 라고 할 수 있음
+- 어떠한 군집에도 속하지 않은 데이터는 noise, outlier 라고 할 수 있음
 
 장점
+
 - K를 미리 결정할 필요 없음
+
 - noise, outlier 에 영향 받지 않음
 
 단점
+
 - 밀도에만 의존하다 보니 군집의 해석이 어려울 수 있음
 
 ### 코드
@@ -1404,6 +1395,8 @@ eps는 시행착오를 통해 최적이 무엇인지 확인 필요
 ```{r}
 dbs
 ```
+
 border : 군집 외각의 수
+
 seed : 군집 중심의 수
 
