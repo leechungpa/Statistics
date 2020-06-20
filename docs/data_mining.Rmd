@@ -10,9 +10,7 @@ output:
     toc: yes
     toc_float: true
     highlight: tango
-    code_folding: hide
     number_section: true
-    self_contained: true
 editor_options: 
   chunk_output_type: console
 ---
@@ -31,21 +29,25 @@ knitr::opts_chunk$set(eval = F)
 
 ![](../data/datamining.png)
 
-설명력 위주 모형 : 통계모형으로 예측력은 떨어지나 모형을 이해하기 좋음 
+설명력 위주 모형 : 통계모형
 
-- X ~ Y 의 인과관계를 얼마나 설명하는지 즉 $R^2$
+- 예측력은 떨어지나 모형을 이해하기 좋음 
 
-- 통계 모델은 주로 선형이므로 오버피팅을 무시해도됨. 즉 $R^2$가 중요
+- 비교기준 : $R^2$
+
+    - X ~ Y 의 인과관계를 얼마나 설명하는지
+
+    - 선형이므로 오버피팅을 무시해도됨. 즉 $R^2$가 중요
 
 예측력 위주 모형 : 예측력은 뛰어나지만 이해와 해석이 어려움 
 
-- 미래의 Y값을 얼마나 잘 예측하는지로 마땅차한 기준 X
+- 미래의 Y값을 얼마나 잘 예측하는지가 기준
 
-- 머신러닝은 비선형 모델델
+- 머신러닝은 비선형 모델로 오버피팅의 위험
+
+    - train set과 test set을 분할하여 overfiting 막음
 
 ## 예측력 회귀 모형 비교 기준
-
-에측력 모형은 train set과 test set을 분할하여 overfiting 막음
 
 아래의 기준들은 전부 test data를 사용해 계산함
 
@@ -70,6 +72,8 @@ $$MAPE = {100\% \over n} \sum (y - \hat y )^2$$
 
 1. Accuracy 계열
 
+단점 : 작위성이 있다 (측도에 따라,  cut-off에 따라 순위변동 가능)
+
 ![](../data/datamining-accuracy.png)
 
 모형 작성시 : sensitivity(TPR), specificity(TNR)
@@ -89,53 +93,58 @@ $$MAPE = {100\% \over n} \sum (y - \hat y )^2$$
 - BCR : TPR과 TNR의 기하평균 
 
 
-단점 : 작위성이 있다 (측도에 따라,  cut-off에 따라 순위변동 가능)
 
 2. ROC 계열
 
-같은 기술이라면 특이도와 민감도는 반비례관계
+ROC : 같은 기술이라면 특이도와 민감도는 반비례관계를 이용한 그래프
 
-x축 : 1-특이도
-y축 : 민감도
+    - x축 : 1-특이도
+
+    - y축 : 민감도
 
 AUROC : area under the ROC curve
 
-일반적올 75%이상임년 적당하고 80%이상이면 좋음, 최소 65% 이상이어야함
+    - 일반적으로 적당한 기준 : 75% 이상
+    
+    - 최소 기준 : 65% 이상
 
 3. Lift Chart 계열
 
-발생확률이 작은 순으로 정렬 후 10(또는 다른)구간화
+3가지 종류(Response, Captured Response, Lift) 중 어느것을 사용하던 결과는 동일
 
-X : 구간화된 sample size
+Lift Chart : 발생확률이 작은 순으로 정렬 후 구간화
 
-Y : 반응률 Response 또는 반응검출률 Captured Response 또는 향상도 Lift
+    - x축 : 구간화된 sample size
 
-- 반응률 Response : 상위등급이 높게나오고 급락하면 good
+    - y축 : 반응률 Response 또는 반응검출률 Captured Response 또는 향상도 Lift
 
-- 향상도 Lift : 상위등급은 1보다 크고, 하위등급은 0에 가까울수록 good
+        - 반응률 Response : 상위등급이 높게나오고 급락하면 good
 
-갑자기 오르거나 내리는등 일관되지 않은 부분이 존재하여 cumulative 선호
+        - 향상도 Lift : 상위등급은 1보다 크고, 하위등급은 0에 가까울수록 good
 
-- 누적 반응률 Response : 경사가 급하면 좋고, unif하면 나쁨
+cummulative Lift Chart : 갑자기 오르거나 내리는등 일관되지 않은 부분이 존재하여 cumulative 선호
 
-- 누적 향상도 Lift : 1로 하강하며 상위등급이 클수록 good
+    - 누적 반응률 Response : 경사가 급하면 좋고, unif하면 나쁨
 
-- 뉴적 반응 검출률 captured response : 유일하게 상승
+    - 누적 향상도 Lift : 1로 하강하며 상위등급이 클수록 good
 
-3가지중 어느것 사용하나 결과는 동일
+    - 누적 반응 검출률 captured response : 유일하게 상승
 
 
+Cumulative accruacy profile CAP : 지니계수 개념
 
-- Cumulative accruacy profile CAP : 지니계수 개념 (클수록 좋음)
+    - 클수록 좋음
 
-( 완벽한 분류시스템 누적반응검출률 면적 - 모형의 누적반응검출률 면적 ) / ( 완벽한 분류시스템 누적반응검출률 면적 - 랜덤한 누적반응검출률 면적 )
+    - ( 완벽한 분류시스템 누적반응검출률 면적 - 모형의 누적반응검출률 면적 ) / ( 완벽한 분류시스템 누적반응검출률 면적 - 랜덤한 누적반응검출률 면적 )
 
-이를 이용해 Profit chart도 가능 : maximize profit = income - cost
+Profit chart : maximize profit = income - cost
+
 
 4. K-S 통계량량
 
-불량 누적분포와 우량 누적분포의 차이가 가장 큰 값 : 차이가 클수록 좋음
+불량 누적분포와 우량 누적분포의 차이가 가장 큰 값 
 
+    - 차이가 클수록 좋음
 
 cf. 이론적 분포함수 : 누적분포함수,  실제 data의 분포함수 : 경험분포함수
 
@@ -146,7 +155,6 @@ cf. 이론적 분포함수 : 누적분포함수,  실제 data의 분포함수 : 
 
 # Regression
 
-## modeling 유의사항
 
 1. 간섭효과 comfuounding effect 제거 방안
 
@@ -157,7 +165,28 @@ cf. 이론적 분포함수 : 누적분포함수,  실제 data의 분포함수 : 
 
 2. 범주형 독립 변수
 
-지시변수 사용 : 0 또는 1
+- 지시변수 사용 : 0 또는 1
+
+3. $R^2$ 증가 방법
+
+유의한 X변수 발굴
+
+    - 독립적이고 다양한 X변수일 수록 유리
+
+범주형 X변수의 교호작용 반영
+
+
+4. 변수 선택
+
+중요한 소수의 예측변수를 찾아낸는 것이 중요 : 일반적으로 AIC 기준
+
+- all subsets
+
+- backwrd elimination
+
+- forward selection
+
+- stepwise elimination
 
 
 ## 모형 해석
@@ -177,7 +206,7 @@ p-value가 0.05보다 작으면 $H_0 : \beta =0$을 기각 : 즉 유의한 기�
 
 Y의 총 변동량 중에서 X에 의해서 설명된 분량 : 즉 회귀모형의 설명력
 
-$R^2$이 1에 가까울 수록 완전히 설명
+    - $R^2$이 1에 가까울 수록 완전히 설명
 
 Adjusted $R^2$ : X변수의 수가 많을수록 좋아지는 $R^2$의 overfitting의 문제를 반영
 
@@ -188,25 +217,25 @@ p-value가 0.05보다 작으면 $H_0 : all \ \beta_i =0$을 기각 : 즉 적어�
 
 cf. $R^2$와 p-value의 관련성
 
-- 높은 $R^2$, 낮은 p-value : 데이터 품질이 높은 경우
+    - 높은 $R^2$, 낮은 p-value : 데이터 품질이 높은 경우
 
-- 낮은 $R^2$, 낮은 p-value : X변수 추가 발굴 (금융 데이터)
+    - 낮은 $R^2$, 낮은 p-value : X변수 추가 발굴 (금융 데이터)
 
-- 낮은 $R^2$, 높은 p-value :유의하지 않은 X변수로 구성된 회귀분석
+    - 낮은 $R^2$, 높은 p-value :유의하지 않은 X변수로 구성된 회귀분석
 
-- 높은 $R^2$, 높은 p-value : 불가능
+    - 높은 $R^2$, 높은 p-value : 불가능
 
-의학 약학 분야와 같이 실험데이터는 인과관계 단순 : $R^2$ 높게 나옴
 
-금융 겡제 분야와 같이 관찰 데이터는 많은 변수와 인과관계 복잡 : $R^2$ 낮게 나옴
+$R^2$는 분야별 유연한 기준 필요
 
-따라서 $R^2$는 분야별 유연한 기준 필요
+    - 의학 약학 분야와 같이 실험데이터는 인과관계 단순 : $R^2$ 높게 나옴
 
+    - 금융 경제 분야와 같이 관찰 데이터는 많은 변수와 인과관계 복잡 : $R^2$ 낮게 나옴
 
 
 ## 모형의 타당성 검토
 
-선형회귀의 기본 가정 : p-value 계산시 F분포를 이용하기에 필요 (가정없이 $R^2$나 기울기 단순 계산은 가능)
+선형회귀의 기본 가정 : p-value 계산시 F분포를 이용하기에 필요
 
 - 정규성 : 오차항의 분포가 평균이 0인 정규성
 
@@ -227,29 +256,6 @@ cf. $R^2$와 p-value의 관련성
 
 잔차 분석 : 모형 추정 후 오차의 추정치인 잔차를 통해 위의 가정들을 검토 가능 
 
-
-## 모형 고급화 방법
-
-1. $R^2$ 증가 방법
-
-유의한 X변수 발굴
-
-독립적이고 다양한 X변수일 수록 유리
-
-범주형 X변수의 교호작용 반영
-
-
-2. 변수 선택
-
-중요한 소수의 예측변수를 찾아낸는 것이 중요 : 일반적으로 AIC 기준
-
-- all subsets
-
-- backwrd elimination
-
-- forward selection
-
-- stepwise elimination
 
 
 ## trellis plot : 범주별 그래프
@@ -288,29 +294,26 @@ xyplot(Price~Odometer|Color,data=usedcar2,panel=mypanel)
 
 설명력위주의 분류분석 : 종속변수가 범주형 변수
 
+선형모델 : cut-off에 따른 hyperplane 분류경계선 자체는 선형
+
+    - 오분류 많이 발생 가능
+
+cut-off기준 : 일반적으로 0.5이나, 불균형자료(imbalanced data)의 경우 P(y=1)가 cut-off값이 됨
 
 $$logit \ P(y=i)=\beta_0 + \beta_1 x$$
 
-시그모이드 함수는 비선형이나 cut-off에 따른 분류경계선 자체는 선형이므로 선형모델임 (GLM : 초평면에서 선형이 나타나기 떄문)
 
-- 따라서 오분류가 많이 발생 가능
+- 장점
 
+    - X가 범주형인경우 one-hot encoding을 통해 지시변수로 사용 가능
 
-장점
+- 단점
 
-- 입력변수가 범주형인경우 one-hot encoding을 통해 지시변수로 사용 가능
+    - NA가 많은 경우 사용 불가능
 
-단점
+    - 교호작용의 있을 경우 해석이 어려움
+    
 
-
-- NA가 많은 경우 사용 불가능
-
-
-
-
-
-
-cut-off기준 : 일반적으로 0.5이나, 불균형자료(imbalanced data)의 경우 P(y=1)가 cut-off값이 됨
 
 ```{r}
 full_model = glm(RESPOND~AGE+BUY18+CLIMATE+FICO+INCOME+MARRIED+OWNHOME+GENDER,
@@ -349,233 +352,8 @@ $R^2$가 없으므로, 대신 AUROC 사용
 
 
 
-
-
-# Decision Tree
-
-분류나무(분류분석)와 회귀나무(회귀분석) 2가지 존재
-
-
-
-의사결정나무는 전체 데이터 집합을 partition
-
-
-
-R에서 범주형 변수는 자동으로 지시변수로 변환되나, baseline을 미리 지정하는 것이 좋음
-
-
-
-장점
-
-- 로지스틱 모형에 비해 더 계산이 빠름 : 신속한 판단 가능
-
-- 단변량 분할 one varaiable at a time
-
-    - small n, large p data 가능
-
-    - missing value가 있을 때 영향 최소화
-
-- 범주형 X변수 처리 용이
-
-    - 지시변수 불필요
-
-- 입력변수가 범주형이면 의사결정 나무 유리 : Decision tree는 교호작용을 찾는데 탁월
-
-    - (로지스틱 회귀분석은 교호작용의 있을 경우 해석이 어려움)
-
-
-- 범주들의 대범주화 : 타 분석방법에 앞서 전처리 과정으로 사용가능
-
-- 해성의 용이성 : 이해하기 쉬운 규칙을 생성
-
-- Y 변수
-
-    - 범주형 변수와 연속형 변수 모두 처리 가능
-    
-    - 소수 그룹에 용이한 처리
-
-- X 변수
-
-    - 교호작용의 파악
-    
-    - 변수개수에 영향을 덜받음
-    
-    - 변수의 중요도 파악
-    
-    - X변수 선택 기능 -> 신경망 등에 사용
-    
-    - 이상치 및 결측치의 형향 적음
-    
-    - 범주형 X변수의 처리 용이
-    
-
-    
-단점
-
-- 분류경계선 hyperplabne 근처에서는 오분류 가능
-
-- 다른 방법에 비해 분류 정확도(예측도)가 낮을 수 있음
- 
-
-
-간단한 모형 underfitting : 설명력 높고 예측력 낮다.
-
-복잡한 모형 overfitting일 : 설명력 낮고 예측력 높다. -> 완전히 성장한 나무는 overfitting 되기 쉬움
-
-
-
-
-
-
-
-
-## CART 의사결정 나무
-
-binary decisuion rule : 노드가 항상 2개로 분할
-
-숫자형 X변수의 경우 부등호 사용, 범주형 X변수의 경우 부분집합 포함 여부 사용
-
-divide and conqure approach : 분할과 계산 사용
-
-불순도를 이용하여 greedy serach
-
-매 분할마다 하나의 X변수만 사용
-
-### 분류 나무의 분할 방법 : 불순도 측정
-
-1. 불순도 함수
-
-- Gini impurity 지니 불순도 : $1-\sum^{K}_{j=1} P_j^2$
-
-    - K : Y의 범주 개수, $P_i$ i번째 범주에 포함될 확률
-
-    - 지니불순도 최댓값 0.5 : 완전히 균일분포($all\ P_i =1/K$)인 경우
-
-    - 지니불순도 최솟값 0 : 불순도가 작을수록 좋음
-
-- 엔트로피 Entropy : $-\sum^{K}_{j=1} P_j log(P_j)$
-
-- 이탈도 Deviance : $-2\sum^{K}_{j=1} n_j log(P_j)$
-
-2. 불순도 측정 : 분할 이전의 노드의 불순도와, 분할 후 각각의 노드별 불순도를 측정
-
-3. 분할 후 각각의 노드별 분순도를 표본수에 따라 가중평균함
-
-4. 분할 이후와 이전이 불순도가 감소했는지를 측정
-
-5. greedy search를 통해 최적의 분할을 찾음 : 여러개의 변수 전부 무차별 대입
-
-
-
-### CART의 faature selection 기준
-
-다음의 parameter를 조정하여 최적의 feature selection을 찾음
-
-1. maxdepth : leaf node의 최대 깊이를 제한
-
-- maxdepth 클수록 tree 커짐
-
-2. minsplit : 각 노드별 최소한의 관측치 수 제한
-
-- minsplit 작을수록 tree 커짐
-
-3. 최소 향상도 cp : complexity parmeter 분할시 최소한으로 작아져야 하는 불순도
-
-- cp 작을수록 tree 커짐
-
-```{r}
-library(rpart)
-library(rpart.plot)
-# default tree
-tree0 <- rpart(BAD ~ ., data = train, method="class")
-prp(tree0, type=4, extra=2, digits=3)
-# maximal tree
-set.seed(1234)
-my.control <- rpart.control(xval=10, cp=0.001, minsplit=35)
-tree1 <- rpart(BAD ~ ., data = train, method="class", control=my.control)
-plot(tree1, uniform=T, compress=T, margin=0.05)
-
-```
-
-
-method = 'class' : 분류나무
-
-method = 'anova' : 회귀나무(Y가 연속형인 경우)
-
-xval : cross-validation으로 몇번 교차검정할지를 의미
-
-
-
-### 대안 분할 surrogate split
-
-missing value가 있을 경우 다른 추가적인 대안 분할 기준을 만들어, 이를 바탕으로 분할
-
-main split과 비슷한 속성이 있는 것을 surrogate split으로 이용함
-
-즉 missing value 있을때 데이터 손실이 적어 imputation(평균, 중앙값으로 NA 대체) 불필요
-
-
-
-
-
-## Pruning 가지치기
-
-overfitting을 막기위해 불필요한 가지 제거
-
-데이터를 3개지로 분할 : training data, pruning data, test data
-
-
-가지크기 결정법
-
-1. pruning data를 사용
-
-- pruning data는 test데이터가 아닌 다른 데이터
-
-2. 교차검증 cross-validation로 예측오차를 계산
-
-- test data중 일부를 pruning data로 사용하고 이 과정을 여러번 반복
-
-3. 예측오차가 가장 작은 모형 선택
-
-
-
-```{r}
-printcp(tee1)
-```
-
-cp : cost-complexity 복잡도
-
-nsplit : number of slplit
-
-rel error : (train data의) 상대오차
-
-xerror : cross-validation의 오차
-
-
-
-```{r}
-plotcp(tee1)
-```
-
-최종 노드의 수 = 분할의 수 + 1
-
-1 SE rule : xerror +- 1 * Xstd
-
-오차는 동일(위 같은 구간안에 있는 것들)하면서 간결한 모형 선택
-
-점선 아래의 오차들은 통계적으로 차이 없는 것들
-
-
-
-
-
-
-
-
-
 # Neural Network
 
-회귀 모형, 분류 모형 둘다 가능
 
 
 비선형 통계 모형으로 universal approximator 범용 근사기
@@ -586,13 +364,17 @@ plotcp(tee1)
 
 - 예측력은 좋음
 
+- 회귀 모형, 분류 모형 둘다 가능
+
 
 단점
 
 
 - 추정해야 할 값들이 많음
 
-- 좋은 결과를 위해 많이 대입해 시도해봐야 하며, 학습에 많은 시간이 걸림
+    - 좋은 결과를 위해 많이 대입해 시도해봐야 함하며
+
+- 학습에 많은 시간이 걸림
 
 - black box : 해석이 어려움
 
@@ -624,18 +406,18 @@ NN을 해석하기 위한 방법이지만, 다변량 분석을 단변량 분석�
 
 활성함수로 보통 sigmoid(logitstic) functions와 hypertangent functions 사용
 
-sigmoid functions $sigmoid(x)={e^x\over {1+e^x}}$ : 0~1 값 반환
+    - sigmoid functions $sigmoid(x)={e^x\over {1+e^x}}$ : 0~1 값 반환
 
-hypertangent functions $tanh(x)={1-e^x\over {1+e^x}}$ : -1~1값 반환
+    - hypertangent functions $tanh(x)={1-e^x\over {1+e^x}}$ : -1~1값 반환
 
 
 ## output layer nodes
 
-estimation purpose : identity activation function**만**을 사용
+회귀 목적 : identity activation function**만**을 사용
 
-classification purpose : sigmoid function 사용 (확률로 변환하여야 함)
+분류 목적 : sigmoid function 사용
 
-- 범주형의 경우 class마다 0~1을 가지는 하나의 output node
+    - 범주형의 경우 class마다 확률인 0~1을 가지는 하나의 output node
 
 
 
@@ -643,7 +425,7 @@ classification purpose : sigmoid function 사용 (확률로 변환하여야 함)
 
 ## training the networks
 
-objective function : 오차에 비례 -> 줄어들게 학습함
+오차에 비례하는 objective function를 줄어들게 학습함
 
 
 cross entropy를 작게 만드는 계수 추정
@@ -686,11 +468,10 @@ cross entropy를 작게 만드는 계수 추정
 
     - ordinal variables의 경우 equal spacing 사용 (0~1 or -1~1을 구간화)
 
-    - 변수 선택도 좋은 방법 : decision tree를 만들어 variable importance를 계산해 screen variables 실행
+    - 변수 선택도 좋은 방법 : decision tree를 만들어 variable importance를 계산해 변수 선택
 
-        - 로지스틱과 같이 선형모형이 아니라, decision tree 같이 비선형 모형을 바탕으로 screen variables를 실행해야 함
-    
-        - decision tree 처럼 random forest 도 사용 가능
+        - 선형모형이 아닌, decision tree 같은 비선형 모형을 바탕으로 변수 선택해야 함
+
 
 4. outlier가 있으면 성능을 저하시킴
 
@@ -699,9 +480,41 @@ cross entropy를 작게 만드는 계수 추정
 
 ## 코드
 
+```{r echo=FALSE}
+directmail = read.csv('./data/directmail.csv')
+```
+
+
 ```{r}
+### Neural Network ###
+complete=complete.cases(directmail)
+directmail1<-directmail[complete,]
+nobs=nrow(directmail1)
+nor = function(x) {(x-min(x))/(max(x)-min(x))}
+directmail1$AGE <- nor(directmail1$AGE)
+directmail1$CLIMATE <- nor(directmail1$CLIMATE)
+directmail1$FICO <- nor(directmail1$FICO)
+directmail1$INCOME <- nor(directmail1$INCOME)
+directmail1$GENDER<-as.numeric(directmail1$GENDER == 'F')
+head(directmail1)
+
+
+# training and test data
+set.seed(1234)
+i = sample(1:nobs, round(nobs*0.7)) #70% for training data, 30% for testdata
+train = directmail1[i,] 
+test = directmail1[-i,]
+
+
 library(neuralnet)
 set.seed(1234)
+nn1<-neuralnet(RESPOND~AGE+BUY18+CLIMATE+FICO+INCOME+MARRIED+OWNHOME+GENDER, 
+               data=train, hidden=3, stepmax = 1e+05, threshold = 0.01, 
+               act.fct='logistic', linear.output=F) 
+print(nn1$weights)
+head(nn1$net.result[[1]])
+plot(nn1)
+
 # two layers
 set.seed(1234)
 nn3<-neuralnet(RESPOND~AGE+BUY18+CLIMATE+FICO+INCOME+MARRIED+OWNHOME+GENDER,
@@ -709,9 +522,6 @@ nn3<-neuralnet(RESPOND~AGE+BUY18+CLIMATE+FICO+INCOME+MARRIED+OWNHOME+GENDER,
                act.fct='logistic', linear.output=F) 
 plot(nn3)
 
-# comparison
-pred3<-compute(nn3,covariate=test[,-1]) #except "RESPOND"
-head(pred3$net.result,10)
 ```
 
 뉴럴 네트워크는 초기값을 이용하기에 set.seed로 고정
@@ -726,10 +536,308 @@ act.fct = 'logistic' : activation 함수
 
 linear.output = F : Y변수가 연속형(회귀분석)이면 T, 분류분석이면 F
 
+```{r}
+
+# comparison
+pred1<-compute(nn1,covariate=test[,-1]) #except "RESPOND"
+head(pred1$net.result,10)
+
+pred3<-compute(nn3,covariate=test[,-1]) #except "RESPOND"
+head(pred3$net.result,10)
+```
+
 
 다른것과 다르게 predict가 아닌 compute를 사용해 예측
 
 covariate = test데이터에서 반응변수를 제외한 행렬
+
+```{r}
+library(pROC)
+roccurve1 <- roc(test$RESPOND ~ as.vector(pred1$net.result))
+roccurve3 <- roc(test$RESPOND ~ as.vector(pred3$net.result))
+plot(roccurve1, col="red", print.auc=TRUE, print.auc.adj=c(1,7), auc.polygon=TRUE)
+plot(roccurve3, col="purple", add=TRUE,  print.auc=TRUE, print.auc.adj=c(3,0))
+legend("bottomright", 
+       legend=c("one layer","one layer 2","two layers","two layers 2","logistic"), 
+       col=c("red","blue","purple","black","darkgreen"), lwd=2)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Decision Tree
+
+의사결정나무는 전체 데이터 집합을 partition
+
+
+간단한 모형 underfitting : 설명력 높고 예측력 낮다.
+
+복잡한 모형 overfitting일 : 설명력 낮고 예측력 높다. -> 완전히 성장한 나무는 overfitting 되기 쉬움
+
+
+장점
+    
+    - Y가 범주형이든 연속형이등 가능 : 분류 나무, 회귀나무
+    
+    - 로지스틱 모형에 비해 더 계산이 빠름 : 신속한 판단 가능
+    
+    - 단변량 분할 one varaiable at a time
+    
+        - small n, large p data 가능
+    
+    - X 변수
+
+        - 변수개수에 영향을 덜받음
+        
+        - 변수의 중요도 파악 가능    
+        
+        - 이상치 및 결측치 영향 최소화
+        
+        - 범주형 X변수 처리 용이
+    
+            - 지시변수 불필요
+        
+        - X 변수가 범주형이면 교효작용 찾는데 탁월한 의사결정 나무 유리
+
+        - 범주들의 대범주화하여 X변수 선택 기능
+        
+            - 타 분석방법에 앞서 전처리 과정으로 사용가능
+            
+            - 신경망등 다른 분석에 선택된 변수 사용가능
+    
+    - 해성의 용이성
+    
+    - Y 변수가 소수 그룹일경우도 처리가 용이함
+    
+
+    
+단점
+
+    - 분류경계선 hyperplabne 근처에서는 오분류 가능
+    
+    - 다른 방법에 비해 분류 정확도(예측도)가 낮을 수 있음
+ 
+
+
+
+
+## CART 의사결정 나무
+
+특징
+
+노드가 항상 2개로 분할
+
+숫자형 X변수의 경우 부등호 사용, 범주형 X변수의 경우 부분집합 포함 여부 사용
+
+불순도를 이용하여 greedy serach
+
+매 분할마다 하나의 X변수만 사용
+
+### 분류 나무의 분할 방법 : 불순도 측정
+
+1. 불순도 함수
+    
+    - Gini impurity 지니 불순도 : $1-\sum^{K}_{j=1} P_j^2$
+    
+        - K : Y의 범주 개수, $P_i$ i번째 범주에 포함될 확률
+    
+        - 지니불순도 최댓값 0.5 : 완전히 균일분포($all\ P_i =1/K$)인 경우
+    
+        - 지니불순도 최솟값 0 : 불순도가 작을수록 좋음
+    
+    - 엔트로피 Entropy : $-\sum^{K}_{j=1} P_j log(P_j)$
+    
+    - 이탈도 Deviance : $-2\sum^{K}_{j=1} n_j log(P_j)$
+
+2. 불순도 측정 : 분할 이전의 노드의 불순도와, 분할 후 각각의 노드별 불순도를 측정
+
+3. 분할 후 각각의 노드별 분순도를 표본수에 따라 가중평균
+
+4. 분할 이후와 이전이 불순도가 감소했는지를 측정
+
+5. greedy search를 통해 최적의 분할을 찾음 
+
+
+
+
+### CART의 feture selection 기준
+
+parameter를 조정을 통해 최적 찾음
+
+1. maxdepth : leaf node의 최대 깊이를 제한
+
+    - maxdepth 클수록 tree 커짐
+
+2. minsplit : 각 노드별 최소한의 관측치 수 제한
+
+    - minsplit 작을수록 tree 커짐
+
+3. 최소 향상도 cp : complexity parmeter 분할시 최소한으로 작아져야 하는 불순도
+
+    - cp 작을수록 tree 커짐
+
+
+### 대안 분할 surrogate split
+
+missing value가 있을 경우 다른 추가적인 대안 분할 기준
+
+    - main split과 비슷한 속성이 있는 것을 surrogate split으로 이용함
+
+    - NA일 경우 imputation(평균, 중앙값으로 NA 대체) 불필요
+
+
+
+
+## Pruning 가지치기
+
+overfitting을 막기위해 불필요한 가지 제거
+
+데이터를 3개지로 분할 : training data, pruning data, test data
+
+
+1. pruning data를 사용
+
+    - pruning data는 test데이터가 아닌 다른 데이터
+
+2. 교차검증 cross-validation로 예측오차를 계산
+
+    - test data중 일부를 pruning data로 사용하고 이 과정을 여러번 반복
+
+3. 예측오차가 가장 작은 모형 선택
+
+
+
+## 코드
+
+```{r echo=FALSE}
+hmeq<-read.table("./data/hmeq.txt",header=T,sep='\t')
+levels(hmeq$REASON)[levels(hmeq$REASON)==""]<-NA
+levels(hmeq$JOB)[levels(hmeq$JOB)==""]<-NA
+```
+
+```{r}
+# training and test data
+set.seed(1234)
+i = sample(1:nrow(hmeq), round(nrow(hmeq)*0.6)) #60% for training data, 40% for test data
+train = hmeq[i,] 
+test = hmeq[-i,]
+
+# default tree
+tree0 <- rpart(BAD ~ ., data = train, method="class")
+prp(tree0, type=4, extra=2, digits=3)
+
+# maximal tree
+set.seed(1234)
+my.control <- rpart.control(xval=10, cp=0.001, minsplit=35)
+tree1 <- rpart(BAD ~ ., data = train, method="class", control=my.control)
+plot(tree1, uniform=T, compress=T, margin=0.05)
+
+#stunting
+my.control <- rpart.control(xval=0, cp=0.01, minsplit=100)
+tree2 <- rpart(BAD ~ ., data = train, method="class", control=my.control)
+prp(tree2, type=4, extra=2, digits=3)
+summary(tree2)
+```
+
+
+method = 'class' : 분류나무
+
+method = 'anova' : 회귀나무(Y가 연속형인 경우)
+
+xval : cross-validation으로 몇번 교차검정할지를 의미
+
+
+
+```{r}
+printcp(tree1)
+```
+
+cp : 복잡도 cost-complexity
+
+nsplit : number of slplit
+
+rel error : (train data의) 상대오차
+
+xerror : cross-validation의 오차
+
+```{r}
+plotcp(tree1)
+```
+
+최종 노드의 수 = 분할의 수 + 1
+
+1 SE rule : xerror +- 1 * Xstd
+
+오차는 동일(위 같은 구간안에 있는 것들)하면서 간결한 모형 선택
+
+점선 아래의 오차들은 통계적으로 차이 없는 것들
+
+```{r}
+# pruning
+tree1.prun <- prune(tree1, cp = 0.006)
+print(tree1.prun)
+prp(tree1.prun, type=4, extra=2, digits=3)
+```
+
+
+
+
+
+
+
+
+```{r}
+# comparison of trees
+prob0 <- predict(tree0, newdata=test, type="prob") 
+prob1 <- predict(tree1.prun, newdata=test, type="prob") 
+prob2 <- predict(tree2, newdata=test, type="prob") 
+
+# type="prob" for class probability, type="vector" for regression
+library(pROC)
+roccurve0 <- roc(test$BAD ~ prob0[,2])
+roccurve1 <- roc(test$BAD ~ prob1[,2])
+roccurve2 <- roc(test$BAD ~ prob2[,2])
+plot(roccurve1, col="red", print.auc=TRUE, print.auc.adj=c(2.5,-8), auc.polygon=TRUE)
+plot(roccurve2, col="blue", add=TRUE,  print.auc=TRUE, print.auc.adj=c(-1,-8))
+plot(roccurve0, col="green", add=TRUE,  print.auc=TRUE, print.auc.adj=c(-1,-5))
+legend("bottomright", legend=c("pruning", "stunting","default"), col=c("red", "blue","green"), lwd=2)
+```
+
+
+```{r echo=F}
+usedcar2 <- read.csv("./data/usedcar2.csv",header = T)
+```
+
+```{r}
+## Regression tree
+library(rpart)
+library(rpart.plot)
+
+# default tree
+tree_default = rpart(Price ~ Odometer + Color, data=usedcar2, method="anova")
+prp(tree_default, type=4, extra=1, digits=3)
+
+# Pruning
+set.seed(1234)
+my.control = rpart.control(xval=10, cp=0.001, minsplit = 5)
+tree_max = rpart(Price ~ Odometer + Color, data=usedcar2, method="anova", control=my.control)
+printcp(tree_max)
+plotcp(tree_max)
+tree_prun = prune(tree_max, cp=0.04)
+prp(tree_prun, type=4, extra=1, digits=3)
+```
+
+
+
 
 
 
@@ -743,40 +851,52 @@ covariate = test데이터에서 반응변수를 제외한 행렬
 
 # Ensemble Methods
 
-- 로지스틱 : bias가 크지만 variance는 작음
-
-    - 하나의 관측값이 변해도 큰 차이 없음
-
-    - likelihood 함수에 의존하여 다양성 확보 어려움
-  
-- 의사결정 나무, 머신러닝 : bias는 작으나 variance가 큼
-
-    - 하나의 관측값에도 크게 변화 : instability 즉 hyperplane의 변동성이 크다
-
-    - 다양성 확보 가능
+```{r echo=FALSE}
+german = read.table("./data/germandata.txt",header=T) 
+german$numcredits = factor(german$numcredits)
+german$residence = factor(german$residence)
+german$residpeople = factor(german$residpeople)
+summary(german)
+```
+    
+    - 로지스틱 : bias가 크지만 variance는 작음
+    
+        - 하나의 관측값이 변해도 큰 차이 없음
+    
+        - likelihood 함수에 의존하여 다양성 확보 어려움
+      
+    - 의사결정 나무, 머신러닝 : bias는 작으나 variance가 큼
+    
+        - 하나의 관측값에도 크게 변화 : instability 즉 hyperplane의 변동성이 크다
+    
+        - 다양성 확보 가능
 
 앙상블 : instability가 큰 모델을 여러번 학습하여 bias와 variance를 줄여 오류의 감소 추구
 
-- 분산 감소에 의한 오류 감소 : Bagging, Random Forest
+    - 분산 감소에 의한 오류 감소 : Bagging, Random Forest
 
-- 편향 감소에 의한 오류 감소 : Boosting(분산도 줄이지만 편향을 더 많이 줄임)
+    - 편향 감소에 의한 오류 감소 : Boosting(분산도 줄이지만 편향을 더 많이 줄임)
 
-- 분산과 편향 모두 감소에 의한 오류 감소 : Mixture of Exports
+    - 분산과 편향 모두 감소에 의한 오류 감소 : Mixture of Exports
 
-**다양성divesity**를 어떻게 확보할 것인지가 중요, 그리고 이를 어떻게 결합aggregate할 것인가 -> 각각의 모델은 성능도 좋으면서 서로 다양한 형태를 나타내는 것이 가장 이상적
+**다양성divesity**를 어떻게 확보할 것인지가 중요, 그리고 이를 어떻게 결합aggregate할 것인가
+
+-> 각각의 모델은 성능도 좋으면서 서로 다양한 형태를 나타내는 것이 가장 이상적
 
 
 
-배깅 : 데이터 변형을 통해 tree 생성
+- 배깅 : 데이터 변형을 통해 tree 생성
 
-부스팅 : 가중치 변형을 통해 tree 생성
+- 부스팅 : 가중치 변형을 통해 tree 생성
 
-랜덤포레스트 : 배깅의 boostrap + 변수 임의 추출
+- 랜덤포레스트 : 배깅의 boostrap + 변수 임의 추출
+
+
 
 
 # Bagging : Boostrapping AGGregatING
 
-classification on unweighted majority voting -> 분산을 감소시키는 효과
+classification on unweighted majority voting
 
 단점
 
@@ -786,7 +906,6 @@ classification on unweighted majority voting -> 분산을 감소시키는 효과
 장점
 
 - 예측력을 높임
-
 
 
 
@@ -816,9 +935,11 @@ classification on unweighted majority voting -> 분산을 감소시키는 효과
 library(rpart)
 library(adabag)
 set.seed(1234)
+i = sample(1:nrow(german), round(nrow(german)*0.7)) #70% for training data, 30% for testdata
+german.train = german[i,] 
+german.test = german[-i,]
 my.control <- rpart.control(xval=0, cp=0, minsplit=5, maxdepth=10)
-bag.german <- bagging(y ~ ., data = german, mfinal=50, control=my.control)
-summary(bag.german)
+bag.train.german <- bagging(y ~ ., data = german.train, mfinal=50, control=my.control)
 ```
 
 bagging을 할 때는 pruning 하지 않고 tree를 크게 만듦 : 분산이 커져 변동성이 증가하나 bias는 작아짐
@@ -829,6 +950,7 @@ mfinal : tree의 개수로 요즘에는 100~200이 기본
 
 
 ```{r}
+pred.bag.german <- predict.bagging(bag.train.german, newdata=german.test)
 print(bag.german$importance)
 ```
 
@@ -838,28 +960,30 @@ print(bag.german$importance)
 
 
 
-
+```{r}
+1-sum(diag(pred.bag.german$confusion))/sum(pred.bag.german$confusion)
+head(pred.bag.german$prob)
+library(pROC)
+roccurve <- roc(german.test$y ~ pred.bag.german$prob[,1])
+plot(roccurve)
+auc(roccurve)
+rocbag = roccurve
+```
 
 # Boosting
 
 classification on unequal weighted training data
 
-부스팅의 경우 tree를 작게 만듦
-
-
-종류 : AdaBoost, Gradient Boost, XGBoost
-
-## 과정
-
-1. 오분류 관측치의 가중치를 높임 (전체 가중치의 합은 1)
-
-2. 가중치를 반형하여 분류를 하고, 계속 오분류를 찾고 가중치를 높이는 과정을 반복
+오분류 관측치의 가중치를 높이며 분류를 반복, 각각의 분류를 합해 최종 분류를 계산하는 방법
 
     - 분류경계선 근처의 가중치가 커짐
 
-3. 각각의 분류를 합해 최종 분류를 계산
-
     - 결국 variance와 bias 감소 (bias가 더 크게 감소)
+
+부스팅의 경우 tree를 작게 만듦
+
+
+train set과 test set을 7대3으로 분할하면 그 속성이 남아 있게되므로, 이러한 분할도 여러번 해보는 것이 좋음
 
 
 ## AdaBoost
@@ -871,19 +995,19 @@ classification on unequal weighted training data
 
 2. 가중치를 사용하여 분류하며 가중치를 변경하는 과정 i=1를 i=M까지 반복
 
-- 가중치 $w_i$를 이용하여 classifier $C_m(x)$ 생성
-
-- 오차인 $err_m={\sum^N_{i=1}w_iI(y_i\not= C_m(X)i)) \over \sum^N_{i=1}w_i}$ 를 계산
-
-    - 오분류시 $I(y_i\not= C_m(X_i))=1$, 정분류시 $I(y_i\not= C_m(X_i))=0$
-
-- tree의 가중치인 $\alpha_m=log((1-err_m)/err_m)$ 를 계산
-
-    - error가 적으면 $\alpha$상승
+    - 가중치 $w_i$를 이용하여 classifier $C_m(x)$ 생성
     
-- 새로운 가중치 생성 $w_i=w_i\ \text{exp}[\alpha_mI(y_i\not= C_m(X_i))]$
-
-- 새로운 가중치의 합이 1이되도록 조정 : $\sum w_i=1$
+    - 오차인 $err_m={\sum^N_{i=1}w_iI(y_i\not= C_m(X)i)) \over \sum^N_{i=1}w_i}$ 를 계산
+    
+        - 오분류시 $I(y_i\not= C_m(X_i))=1$, 정분류시 $I(y_i\not= C_m(X_i))=0$
+    
+    - tree의 가중치인 $\alpha_m=log((1-err_m)/err_m)$ 를 계산
+    
+        - error가 적으면 $\alpha$상승
+        
+    - 새로운 가중치 생성 $w_i=w_i\ \text{exp}[\alpha_mI(y_i\not= C_m(X_i))]$
+    
+    - 새로운 가중치 전체의 합이 1이 되도록 조정 : $\sum w_i=1$
 
 3. 반복한 분류를 가중치를 반영하여 최종 분류를 만듦 $C_{AD}(X)=sign[\sum^M_{m=1}\alpha_mC_M(X)]$
 
@@ -896,8 +1020,19 @@ classification on unequal weighted training data
 library(rpart)
 library(adabag)
 set.seed(1234)
+i = sample(1:nrow(german), round(nrow(german)*0.7)) #70% for training data, 30% for testdata
+german.train = german[i,] 
+german.test = german[-i,]
 my.control <- rpart.control(xval=0, cp=0, maxdepth=1)
-boo.german <- boosting(y ~ ., data = german, boos=T, mfinal=100, control=my.control)
+boo.train.german <- boosting(y ~ ., data = german.train, boos=T, mfinal=100, control=my.control)
+pred.boo.german <- predict.boosting(boo.train.german, newdata=german.test)
+print(pred.boo.german$confusion)
+1-sum(diag(pred.boo.german$confusion))/sum(pred.boo.german$confusion)
+head(pred.boo.german$prob)
+roccurve <- roc(german.test$y ~ pred.boo.german$prob[,1])
+plot(roccurve)
+auc(roccurve)
+rocboost = roccurve
 ```
 
 xval=0 : 푸루닝 하지 않음
@@ -906,15 +1041,14 @@ boos=T : 가중치 반영시 bootstrap에서 가중치 높은 것을 여러번 �
 
 
 
-train set과 test set을 7대3으로 분할하면 그 속성이 남아 있게되므로, 이러한 분할도 여러번 해보는 것이 좋음
-
 
 
 ## Gradient Boost
 
-$Y=h_1(X)+err1$에서 오류를 다시 $err1=h_2(X)+err2$와같이 분류하는 형식 : 즉 error를 바탕으로 boosting을 계속하는 방법
+$Y=h_1(X)+err1$에서 오류를 다시 $err1=h_2(X)+err2$와 같이 분류하는 방법 : $F_m(X)=F_{m-1}(X)+w_mh_m(X)$
 
-$F_m(X)=F_{m-1}(X)+w_mh_m(X)$
+    - 즉 error를 바탕으로 boosting을 계속하는 방법
+
 
 Gredient Descent 알고리즘으로 최적 weight 계산
 
@@ -967,7 +1101,6 @@ Gredient Descent 알고리즘으로 최적 weight 계산
 
 majority voting : $\hat{Y}_{Ensemble}=\text{argmax}_i(\sum_{j=1}^n\delta({Y}_j=i),\ i\in\{0,1\})$
 
-
 weighted (각 모델의 예측정확도 $TrnAcc_j$ 사용) voting : $\hat{Y}_{Ensemble}= \text{argmax}_i({\sum_{j=1}^n(TrnAcc_j)\delta(Y_j=i)\over\sum_{j=1}^n(TrnAcc_j)},\ i\in\{0,1\})$
 
 weighted (각 class별 에측 확률) voting : $\hat{Y}_{Ensemble}= \text{argmax}_i({{1\over n}\sum_{j=1}^nP(Y_j=i)},\ i\in\{0,1\})$
@@ -976,16 +1109,18 @@ weighted (각 class별 에측 확률) voting : $\hat{Y}_{Ensemble}= \text{argmax
 
 ## OOB Error : Out Of Bag error
 
-개별 학습 데이터 섹 구성시 bootstrap 되지 않은 개체들을 검증용으로 사용
+개별 학습 데이터셋 구성시 bootstrap 되지 않은 개체들을 검증용으로 사용
 
 이 값을 test 데이터로 삼으면, test error가 계산됨
 
 
 ## 변수 중요도
 
-다중선형 회귀분석, 로지스틱 회귀분석과는 달리 개별 변수가 통계적으로 얼마나 유의한지에 대한 정보인 p-value 없음
+회귀분석과는 다르게 개별 변수가 통계적으로 얼마나 유의한지에 대한 정보(p-value)가 없음어 간접적인 방식으로 추정
 
-대신 간접적인 방식으로 추정 : 절대적인 개념이 아니라 상대적인 개념
+    - 절대적인 개념이 아니라 상대적인 개념
+    
+    - 다른 모형에서도 OOB를 활용한 변수중요도개념 자주 활용
 
 1. 원래 OOB 데이터 집합에 대해서 OOB Error $e_j$ 구함
 
@@ -1009,39 +1144,100 @@ weighted (각 class별 에측 확률) voting : $\hat{Y}_{Ensemble}= \text{argmax
 
     - 오류율의 차이가 클수록 해당변수가 tree에서 중요한 역할
 
-다른 모형에서도 OOB를 활용한 변수중요도개념 자주 활용
+
+## 코드
+```{r}
+library(randomForest)
+set.seed(1234)
+i = sample(1:nrow(german), round(nrow(german)*0.7)) #70% for training data, 30% for testdata
+german.train = german[i,] 
+german.test = german[-i,]
+rf.train.german <- randomForest(y ~ ., data = german.train, ntree=100, mtry=5, 
+                                importance=T, na.action=na.omit)
+pred.rf.german <- predict(rf.train.german, newdata=german.test)
+tab=table(german.test$y,pred.rf.german, dnn=c("Actual","Predicted"))
+print(tab)
+1-sum(diag(tab))/sum(tab)
+prob.rf.german <- predict(rf.train.german, newdata=german.test, type="prob")
+head(prob.rf.german)
+roccurve <- roc(german.test$y ~ prob.rf.german[,1])
+plot(roccurve, col="red", print.auc=TRUE, print.auc.adj=c(2.5,3), auc.polygon=TRUE)
+plot(rocbag, col="green", print.auc=TRUE, print.auc.adj=c(2.5,1), add=T)
+plot(rocboost, col="blue", print.auc=TRUE, print.auc.adj=c(2.5,-1), add=T)
+
+```
+
+```{r echo=FALSE}
+usedcar2 <- read.csv("./data/usedcar2.csv",header = T)
+```
+
+
+
+## 코드 : 회귀분석의 경우
+
+```{r}
+### Random Forest ###
+## Regression
+nobs=nrow(usedcar2)
+# indicator variables
+usedcar2$Ind1<-as.numeric(usedcar2$Color == 'white')
+usedcar2$Ind2<-as.numeric(usedcar2$Color == 'silver')
+
+# training and test data
+set.seed(1234)
+i = sample(1:nobs, round(nobs*0.7)) #70% for training data, 30% for testdata
+train = usedcar2[i,] 
+test = usedcar2[-i,]
+
+# several models
+tmpmodel = lm(Price ~ Odometer+Ind1+Ind2+Ind1:Odometer+Ind2:Odometer, data=train)
+model1 = step(tmpmodel, direction = 'both')
+summary(model1)
+
+library(randomForest)
+model2 <- randomForest(Price ~ Odometer + Color, data = train, ntree=100, mtry=2,
+                           importance=T, na.action=na.omit)
+# predicted values
+pred1 = predict(model1, newdata=test, type='response')
+pred2 = predict(model2, newdata=test, type='response')
+# predictive R^2
+cor(test$Price, pred1)^2
+cor(test$Price, pred2)^2
+# MAE
+mean(abs(test$Price - pred1))
+mean(abs(test$Price - pred2))
+# MAPE
+mean(abs(test$Price - pred1)/abs(test$Price))*100
+mean(abs(test$Price - pred2)/abs(test$Price))*100
+# variable importance of Random Forest
+model2$importance
+```
 
 
 
 
-
-
-
-
-#  Clustering
-
-Unsupervised Learnging
+#  Clustering : Unsupervised Learnging
 
 X 변수 대부분 연속형이어야 함 : distance를 사용하므로 범주형의 경우 계산 불가 (지시변수도 가능하나 좋지 못한 방법)
 
-군집분석은 자료 사이의 거리를 이용하여 수행되기 때문에, 각 자료의 단위가 결과에 큰 영향을 미친다. ->  반드시 표준화 standardization 필요
+군집분석은 자료 사이의 거리를 이용하기에, 변수별 단위가 결과에 큰 영향 ->  반드시 표준화 standardization 필요
 
 ## 표준화 standardization
 
 1. 관측치 표준화
 
-- 관측치가 사람의 경우 관측치 표준화 불필요
+    - 관측치가 사람의 경우 관측치 표준화 불필요
 
-- 파생변수로 관찰치 표준화가능
+    - 파생변수로 관찰치 표준화가능
 
-    - 파생변수 생성시 비율의 경우 관려적으로 log 취함
+        - 파생변수 생성시 비율의 경우 관려적으로 log 취함
 
 
 2. 변수 표준화
 
-- 각 변수의 관찰값으로부터 그 변수의 평균을 빼고, 그 변수의 표준편차로 나누는 것
+    - 각 변수의 관찰값으로부터 그 변수의 평균을 빼고, 그 변수의 표준편차로 나누는 것
 
-- 표준화된 자료는 모든 변수가 평균이 0이고 표준편차가 1
+    - 표준화된 자료는 모든 변수가 평균이 0이고 표준편차가 1
 
 
 ## 군집화의 기준 : distance
@@ -1059,43 +1255,47 @@ X 변수 대부분 연속형이어야 함 : distance를 사용하므로 범주�
 
 1. 유클리드 Euclidean 거리 : $d(x,y)=(\sum_{i=1}^p(x_i-y_i)^2)^{1/2}$ when p=2 (x, y)
 
-- pairwise 거리
+    - pairwise 거리
 
 2. Minkowski 거리 : $d(x,y)=(\sum_{i=1}^p(x_i-y_i)^m)^{1/m}$
 
-- 일반화된 형태로, m = 2 이면 Euclidean
+    - 일반화된 형태로, m = 2 이면 Euclidean
 
 
 
 3. Manhalanobis 거리 : $d(x,y)=\sqrt{(x-y)^TS^{-1}(x-y)}$
 
 
-- 공분산행렬 S : correlation 반영 - 다른 거리와 다르게 ind 가정 없어서 이론적으로는 가장 우월하나 실제 s 계산이 어려움
+    - 공분산행렬 S : correlation 반영 - 다른 거리와 다르게 ind 가정 없어서 이론적으로는 가장 우월하나 실제 s 계산이 어려움
 
 4. Manhattan Distance : $d_{Manhattan}(x,y)=\sum^p_{i=1}|x-y|$
+
+
 
 
 
 # Hierarchical clustering 계층적 군집분석
 
 
-nC2 즉 $n^2$에 비례하여 계산량 증가
-
-
-
 장점
-
-- 군집의 수를 알 필요가 없음 -> 사후에 판단 가능
-
-- 덴드로그램을 통해 군집화 프로세스와 결과물을 표현가능
+    
+    - 군집의 수를 알 필요가 없음 -> 사후에 판단 가능
+    
+    - 해석에 용이
+    
+        - 덴드로그램을 통해 군집화 프로세스와 결과물을 표현가능
 
 단점
-
-- 계산속도가 느림 : $n^2$에 비례
-
-- 이상치가 존재할 경우, 초기 단계에 잘못 분류된 군집은 분석이 끝날때까지 소속군집이 변하지 않음
-
-- 이상치에 대한 사전검토 필요, Centroid 방법이 이상치에 덜 민감함
+    
+    - 계산속도가 느림 
+    
+       - $_nC_2$ 즉 $n^2$에 비례하여 계산량 증가
+    
+    - 이상치에 대한 사전검토 필요
+    
+        - 이상치가 존재할 경우, 초기 단계에 잘못 분류된 군집은 분석이 끝날때까지 소속군집이 변하지 않음
+        
+        - Centroid 방법이 이상치에 덜 민감함
 
 
 ## 과정
@@ -1109,31 +1309,19 @@ nC2 즉 $n^2$에 비례하여 계산량 증가
 
 4. 거리행렬 D중 새롭게 변화 되는 부분인 (UV) 와 다른 군집 W 사이의 거리 $d_{(UV)W}$를 계산
 
+    - single linkage 단일연결법 : $d_{(UV)W}=\text{min}(d_{UW},d_{VW})$
+
+    - complete linkage 완전연결법 : $d_{(UV)W}=\text{max}(d_{UW},d_{VW})$
+
+    - average linkage 평균연결법 : $d_{(UV)W}={\sum^{n_{UV}}_{i=1}\sum^{n_{W}}_{i=1}d_{ij}\over n_{UV}n_W})$
+
+    - centroid method 중심점연결법 : $d_{(UV)W}=\text{distance between the centroids of cluster UV and W}$
+
+    - Ward's Method
+
 5. 위의 과정을 N-1 반복하여 모든 관측치가 하나의 군집으로 바꿈
 
 6. Dendro gram을 활용 : 어느 levels에서 어떻게 결합되어있는지 판단
-
-
-## 계층적 군집분석 종류 (위의 4번)
-
-1. single linkage 단일연결법 : mininmum distance or nearast neighbor
-
-$d_{(UV)W}=\text{min}(d_{UW},d_{VW})$
-
-
-2. complete linkage 완전연결법 : maximum distance or furthest neighbor
-
-$d_{(UV)W}=\text{max}(d_{UW},d_{VW})$
-
-3. average linkage 평균연결법 : average distance
-
-$d_{(UV)W}={\sum^{n_{UV}}_{i=1}\sum^{n_{W}}_{i=1}d_{ij}\over n_{UV}n_W})$
-
-4. centroid method 중심점연결법 : compute the centroid for each cluster
-
-$d_{(UV)W}=\text{distance between the centroids of cluster UV and W}$
-
-5. Ward's Method
 
 
 
@@ -1141,25 +1329,29 @@ $d_{(UV)W}=\text{distance between the centroids of cluster UV and W}$
 
 ## dendrogram 고드름 그림
 
-계층적 군집분석에만 dendrogram이 있음
-
-a graphical tool to ilustrate the merges or divisions
+계층적 군집분석에만 dendrogram이 있음 : graphic to ilustrate the merges or divisions
 
 
 
 ## 코드
 
-scale : (변수) 표준화
-
-hclust : hierarchical clustering
-
-dist : distance
-
-
-rect.hclust : rectangular
-
-cutree : 군집별 번호 매김
-
+```{r}
+### Hierarchical Clustering
+head(USArrests)
+zUSArrests=scale(USArrests) # scale() : 변수 표준화
+summary(zUSArrests)
+dist(zUSArrests) # dist() : distnace
+hc1=hclust(dist(zUSArrests),method="average") # hclust() : hierarchical clustering
+plot(hc1, hang = -1)
+rect.hclust(hc1, k=5)
+cutree(hc1, k=5)
+cluster <- cutree(hc1, k=5) #cutree() : 군집별 번호 매김
+cent <- NULL
+for (k in 1:5){
+  cent <- rbind(cent, colMeans(USArrests[cluster == k,]))
+}
+cent
+```
 
 
 
@@ -1169,32 +1361,31 @@ cutree : 군집별 번호 매김
 사전에 결정된 군집수 k에 기초하여 전체 데이터를 상대적으로 유사한 k개의 군집으로 구분
 
 
-단독군집이 잘 안나옴
-
-
 장점
-
-- 신속한 계산결과로 대용량 데이터에 적합함
-
-- 군집분석 이외에도 분류,예측을 위한 선행작업, 이상치 처리작업등 다양한 분석에 사용 : 정제 천처리 등
-
-
-- 계산속도가 빠르다 : n에 비례
-
-    - 일반적으로 3번 정도 반복 -> 3nk
+    
+    - 신속한 계산결과로 대용량 데이터에 적합함
+    
+    - 군집분석 이외에도 분류,예측을 위한 선행작업, 이상치 처리작업등 다양한 분석에 사용 : 정제 천처리 등
+    
+    - 단독군집이 잘 안나옴
+    
+    
+    - 계산속도가 빠르다 : n에 비례
+    
+        - 일반적으로 3번 정도 반복 -> 3nk
 
 
 
 
 단점
-
-- 사전에 군집수 K를 결정하기 어려움 : 주관적 선택 필요
-
-- 군집결과의 해석이 용이하지 않을 수 있음 (계층적 분석은 해석에 용이)
-
-- 초기값에 영향을 많이 받음(일반적으로 k-means는 군집수가 비슷하게 나옴) : 초기값을 잘못 정하면 잘못된 결과 가능
-
-
+    
+    - 사전에 군집수 K를 결정하기 어려움 : 주관적 선택 필요
+    
+    - 군집결과의 해석이 용이하지 않을 수 있음
+    
+    - 초기값에 영향을 많이 받아 잘못 정하면 잘못된 결과 가능
+    
+        - 일반적으로 k-means는 군집수가 비슷하게 나옴 : 그래서 초기값에 영향을 많이 받음
 
 
 
@@ -1216,27 +1407,22 @@ cutree : 군집별 번호 매김
 
 ## K 결정법
 
-K-평균 군집분석법의 결과는 초기 군집수 k의 결정에 민감하게 반응한다.
+K-평균 군집분석법의 결과는 초기 군집수 k의 결정에 민감하게 반응
 
-1. 여러 가지의 k값을 선택하여 군집분석을 수행한 후 가장 좋다고 생각되는 k값을 이용
+1. 여러 가지의 k값으로 군집분석을 수행한 후 최적의 k값을 이용
 
-- Elbow point 계산하여 K 선택
+    - Elbow point 계산하여 K 선택
 
-- Silhouette plot 으로 K 선택
+    - Silhouette plot 으로 K 선택
 
-2. 자료의 시각화를 통하여 K를 결정 : 시각화된 그래프를 보고 군집의 수를 판단
+2. 시각화된 자료 그래프를 통하여 K를 결정
 
-- 자료의 시각화를 위하여는 차원의 축소가 필수적 : PCA 사용
-
-
-
-3. 빅데이터에서 sampling한 데이터로 계층적 군집분석을 우선 수행하여, K의 값을 선택
-
-- 계층적 군집분석 : 소용량 데이터만 가능
-
-- 이를 바탕으로 k-means clustering 실행
+    - 자료의 시각화를 위하여는 차원의 축소가 필수적 : PCA 사용
 
 
+3. 빅데이터에서 sampling한 데이터로 계층적 군집분석을 수행하여 K값을 선택
+
+    - 계층적 군집분석 : 소용량 데이터만 가능
 
 
 
@@ -1244,8 +1430,7 @@ K-평균 군집분석법의 결과는 초기 군집수 k의 결정에 민감하�
 
 K를 결정하기 위한 한 방법으로 K-means에 적합함
 
-```r Within group sum of squares by cluster```즉 군집중심과 군집내 관찰값 간의 거리제곱의 합이 급격히 감소하다 완만해지는 부분이 elbow point
-
+elbow point : 군집중심과 군집내 관찰값 간의 거리제곱의 합이 급격히 감소하다 완만해지는 부분
 
 
 
@@ -1261,21 +1446,21 @@ $$s(i)=
 b(i)/a(i)-1\ , & \mbox{if }a(i)>b(i)
 \end{cases}$$
 
-분모의 max : 관찰치의 수가 많을 수록 s(i)가 커지는 것을 방지
+    - 분모의 max : 관찰치의 수가 많을 수록 s(i)가 커지는 것을 방지
 
-1에 가까울수록 군집화가 잘 된 관찰값임
+    - 1에 가까울수록 군집화가 잘 된 관찰값임
 
 
+    - $a(i)$ : 개체 i로부터 같은 군집 내에 있는 모든 다른 개체들 사이의 평균 거리
 
-$a(i)$ : 개체 i로부터 같은 군집 내에 있는 모든 다른 개체들 사이의 평균 거리
-
-$b(i)$ : 개체 i로부터 다른 군집 내에 있는 개체들 사이의 평균 거리 중 가장 작은 값 -> 클수록 좋다
+    - $b(i)$ : 개체 i로부터 다른 군집 내에 있는 개체들 사이의 평균 거리 중 가장 작은 값 -> 클수록 좋다
 
 
 
 ```{r}
 plot(kmed$pamobject)
 ```
+
 explain ##.## % : PCA의 설명력의 의미, 즉 n차원을 2차원의 그래프로 축소 (PCA 그래프)
 
 average silhouette wideth : 0.## -> 평균 silhouette를 의미
@@ -1285,17 +1470,69 @@ average silhouette wideth : 0.## -> 평균 silhouette를 의미
 값이 클수록 좋은것임
 
 
-해석의 용의성은 K=4가 좋으나 성능은 K=2 경우 무엇을 선택할지?
-
-
 
 ### 코드
 
 ```{r}
+### K-means Clustering
+set.seed(1234)
+kmc1 = kmeans(zUSArrests,4)
+kmc1
+pairs(zUSArrests, col=kmc1$cluster, pch=16)
 
-# kmeans(, centers-)
+## Elbow point
+wss = 0
+for (i in 1:10) wss[i] = sum(kmeans(zUSArrests,center=i)$withinss)
+
+plot(1:10, wss, type='b', xlab="Number of Clusters", ylab="Within group sum of squares")
 ```
-centers = : 인위적인 초기값
+
+
+
+```{r echo=FALSE}
+### Dungaree Data
+dungaree = read.table('./data/dungaree.csv',sep=',',header=T)
+head(dungaree,10)
+dungaree$fratio = with(dungaree, log(fashion/original))
+dungaree$lratio = with(dungaree, log(leisure/original))
+dungaree$sratio = with(dungaree, log(stretch/original))
+dungratio = dungaree[,c("fratio", "lratio", "sratio")]
+summary(dungratio)
+```
+
+
+```{r}
+# transformation
+zdungratio = scale(dungratio)
+summary(zdungratio)
+
+# k 찾기 : 3D plot
+library(rgl)
+plot3d(zdungratio[,1], zdungratio[,2], zdungratio[,3], col="blue", size=5) 
+
+# k찾기 : hierarchical clustering
+hc_dung=hclust(dist(zdungratio), method="average")
+plot(hc_dung, hang = -1)
+rect.hclust(hc_dung, k=3)
+# initial points
+tmp <- data.frame(zdungratio)
+tmp$cluster <- cutree(hc_dung, k=3)
+cent <- NULL
+for (k in 1:3){
+  cent <- rbind(cent, colMeans(tmp[tmp$cluster == k,]))
+}
+cent
+x1 <- c(0,0,-6)
+x2 <- c(0,0,0)
+x3 <- c(0,-3,0)
+kcenters <- data.frame(x1,x2,x3)
+
+# K-means clustering
+kmean_dung = kmeans(zdungratio,centers=kcenters) # centers = : 인위적인 초기값
+kmean_dung
+pairs(zdungratio, col=kmean_dung$cluster, pch=16)
+```
+
 
 
 
@@ -1305,7 +1542,7 @@ centers = : 인위적인 초기값
 
 K-means와 비슷하나 중심화 할때 medoid 사용
 
-medoid : the object whose average dissimilarity to all the objects in the cluster is minimal. 즉 변수별 중앙값의 좌표(다변량)
+medoid : 변수별 중앙값의 좌표(object whose average dissimilarity to all the objects in the cluster is minimal)
 
 Euclidean distances가 아니기에 outlier에 robust함
 
@@ -1313,19 +1550,28 @@ Euclidean distances가 아니기에 outlier에 robust함
 ## 코드
 
 ```{r}
-pamk()
+### K-medoids clustering
+library(fpc)
+zUSArrests=scale(USArrests)
+kmed = pamk(zUSArrests) # pamk() : k=2~10을 해보고 silhouette을 바탕으로 최적을 찾음
+kmed
+pairs(USArrests, col=kmed$pamobject$clustering, pch=16)
+par(mfrow=c(1,2))
+plot(kmed$pamobject)
+
+kmed1 = pamk(zUSArrests,4)
+kmed1
+pairs(zUSArrests, col=kmed1$pamobject$clustering, pch=16)
+par(mfrow=c(1,2))
+plot(kmed1$pamobject)
+par(mfrow=c(1,1))
 ```
-
-k=2~10을 해보고 silhouette을 바탕으로 최적을 찾음
-
-args를 k=4로 지정 가능
 
 
 
 # Density-based clustering
 
-
-이전과 다르게 밀도(densely populated area) 기반 군집 분석
+밀도(densely populated area) 기반 군집 분석
 
 
 장점
@@ -1355,24 +1601,29 @@ args를 k=4로 지정 가능
     - 어떠한 군집에도 속하지 않은 데이터는 noise, outlier
 
 ### 코드
-
 ```{r}
-
+## DBSCAN
 library(fpc)
-dbs = dbscan(zUSArrests,eps=0.8)
-
+dbscan(zUSArrests,eps=0.8)
 ```
 
 MinPtes=5가 기본값
 
 eps는 시행착오를 통해 최적이 무엇인지 확인 필요
 
-
-```{r}
-dbs
-```
-
-¡border : 군집 외각의 수
+border : 군집 외각의 수
 
 seed : 군집 중심의 수
+
+
+```{r}
+pairs(zUSArrests, col=dbs$cluster+1, pch=16)
+cent <- NULL
+for (k in 0:2){
+  cent <- rbind(cent, colMeans(USArrests[dbs$cluster == k,]))
+}
+cent
+```
+
+
 
