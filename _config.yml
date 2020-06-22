@@ -1,8 +1,11 @@
 #####
-## github page
+## github page withouit fork
 #####
 
-exclude: ["ReadMe.md", ".Rmd"]
+markdown: kramdown
+
+
+exclude: ["ReadMe.md"]
 
 
 title : statistics
