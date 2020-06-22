@@ -5,3 +5,5 @@ author :
   name : Lee Chungpa
   email : leechungpa@gmail.com
   github : leechungpa
+
+exclude: ["ReadMe.md"]
