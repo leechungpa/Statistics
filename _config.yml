@@ -1,0 +1,12 @@
+#####
+## github page
+#####
+
+exclude: ["ReadMe.md", ".Rmd"]
+
+
+title : statistics
+author :
+  name : Lee Chungpa
+  email : leechungpa@gmail.com
+  github : leechungpa
