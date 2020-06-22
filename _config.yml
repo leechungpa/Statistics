@@ -6,4 +6,4 @@ author :
   email : leechungpa@gmail.com
   github : leechungpa
 
-exclude: ["ReadMe.md"]
+exclude: [".Rmd"]
