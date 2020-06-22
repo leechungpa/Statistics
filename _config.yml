@@ -5,7 +5,7 @@
 markdown: kramdown
 
 
-exclude: ["ReadMe.md"]
+exclude: ["ReadMe.md",".Rmd"]
 
 
 title : statistics
