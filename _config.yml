@@ -1,9 +1,1 @@
 remote_theme: pmarsceill/just-the-docs
-
-title : statistics
-author :
-  name : Lee Chungpa
-  email : leechungpa@gmail.com
-  github : leechungpa
-
-exclude: [".Rmd"]
