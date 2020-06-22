@@ -1,12 +1,4 @@
-#####
-## github page withouit fork
-#####
-
-markdown: kramdown
-
-
-exclude: ["ReadMe.md",".Rmd"]
-
+remote_theme: pmarsceill/just-the-docs
 
 title : statistics
 author :
