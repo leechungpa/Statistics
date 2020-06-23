@@ -1,1 +1,10 @@
 theme : just-the-docs
+
+
+# info
+title: Statistics
+description: Statistics and Data Science
+
+exclude:
+  - README.md
+  - "*.Rmd"
