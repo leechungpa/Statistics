@@ -1,3 +1,22 @@
+###
+# just-the-docs
+###
+*.gem
+.bundle
+.sass-cache
+_site
+Gemfile.lock
+node_modules
+
+
+
+
+
+###
+# R
+###
+
+
 # History files
 .Rhistory
 .Rapp.history
