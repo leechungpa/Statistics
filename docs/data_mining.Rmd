@@ -1258,7 +1258,7 @@ majority voting : $\hat{Y}_{Ensemble}=\text{argmax}_i(\sum_{j=1}^n\delta({Y}_j=i
 
 weighted (각 모델의 예측정확도 $TrnAcc_j$ 사용) voting : $\hat{Y}_{Ensemble}= \text{argmax}_i({\sum_{j=1}^n(TrnAcc_j)\delta(Y_j=i)\over\sum_{j=1}^n(TrnAcc_j)},\ i\in\{0,1\})$
 
-weighted (각 class별 에측 확률) voting : $\hat{Y}_{Ensemble}= \text{argmax}_i({{1\over n}\sum_{j=1}^nP(Y_j=i)},\ i\in\{0,1\})$
+weighted (각 class별 에측 확률) voting : $\hat{Y}_{Ensemble}= \text{argmax}_i({1\over n}\sum_{j=1}^nP(Y_j=i),\ i\in\{0,1\})$
 
 
 
