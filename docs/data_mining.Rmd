@@ -4,7 +4,7 @@ title: "데이터 마이닝"
 subtitle: "R을 기반으로"
 author:
     name: "[이청파](https://github.com/leechungpa/)"
-date: "최종 수정일 : `r Sys.time()`"
+date: "2020-06-23"
 output:
   github_document: 
     toc: yes
