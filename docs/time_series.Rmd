@@ -23,8 +23,4 @@ body{
 }
 </style>
 
-```{r setup, echo=F}
-knitr::opts_chunk$set(eval = F)
-```
-
 
