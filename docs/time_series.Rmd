@@ -4,7 +4,7 @@ title: "시계열 자료분석"
 subtitle: "R을 기반으로"
 author:
     name: "[이청파](https://github.com/leechungpa/)"
-date: "최종 수정일 : `r Sys.Date()`"
+date: "2020-06-23"
 output:
   html_document: 
     toc: yes
