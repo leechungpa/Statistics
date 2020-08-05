@@ -1,0 +1,110 @@
+---
+layout: page
+title: "시계열 자료분석"
+subtitle: "R을 기반으로"
+author:
+    name: "[이청파](https://github.com/leechungpa/)"
+date: "2020-06-23"
+output:
+  html_document: 
+    toc: yes
+    toc_float: true
+    highlight: tango
+    code_folding: hide
+    number_section: true
+    self_contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+<style>
+body{
+     font-family: 나눔바른고딕;
+}
+</style>
+
+```{r}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+
+# 시계열 분석
+시계열 $\{Y_t:0\leq t \leq T \}$ : 시간의 흐름에 따라 일정한 간격으로 기록된 데이터로 데이터 간 연관성이 있다.
+
+## 시계열의 4가지 변동성분
+계통성분 Systematic component
+- 추세성분 Trend component
+- 계절성분 Seasonal component
+- 순환성분 Cyclinical component
+비계통성분 Nonsystematic component
+- 불규칙성분 Irregular component
+
+
+
+# 평활법 Smoothing method
+## Moving Average 이동평균법 : 특정 기간의 관측치를 산술 평균
+단순이동평균 : 
+	수평추세 : 추세가 없는 경우 사용
+	과거 자료값에 동일한 가중치 : 산술평균 이용
+	데이터의 수가 줄어든다.
+	MSE가 최소화 되는 m 추정
+	미래에 대한 예측 : 
+이중(선형)이동평균 : 
+	직선 추세의 경우 사용
+	이동평균을 두 번 적용
+
+
+## Exponential smoothing 지수평활법 : 모든데이터를 가중치에 따라 가중 평균
+단순지수평활 : 
+	수평추세
+	초기 평활값  선택 :  등
+	평활상수  선택  : MSE 최소화, 1에 가까울 수록 최근의 추세 반영
+	lagging 현상 발생
+
+
+
+```{r}
+libarary(forecast) # 단순지수평활
+ses(시계열객체, h=예측하고자 하는 미래시차 수, level = 예측신뢰수준, initial = ‘optimal’은 EST방법 초깃값 ‘simple’은 을 초깃값으로 지정, alpha = 평활상수로 NULL이면 자동으로 추정)
+```
+
+
+이중지수평활  : 
+	선형추세
+	t시점에서 l단계 후 예측 : 
+
+libarary(forecast) # holt 방법 이중지수평활
+holt(시계열객체, h=예측하고자 하는 미래시차 수, level = 예측신뢰수준, initial = ‘optimal’은 EST방법 초깃값 ‘simple’은 을 초깃값으로 지정, exponentail = TRUE이면 지수적추세 FALSE이면 선형추세, alpha = 평활상수로 NULL이면 자동으로 추정, beta = 평활상수로 NULL 마찬가지)
+
+
+계절지수평활
+가법적 계절지수 평활 : 계절적 진폭의 크기가 일정
+	수평성분 : 
+	추세성분 : 
+	계절성분 : 
+	t시점에서 l단계 후 예측 : 
+
+승법적 계절지수 평활 : 계절적 진폭의 크기가 점차적 증가 또는 감소
+	t시점에서 l단계 후 예측 : 
+
+
+libarary(forecast) # holt-winters 방법 계절지수 평활
+hw(시계열객체, h=예측하고자 하는 미래시차 수, seasonal = ‘addictive’는 가법모형 ‘multiplicative’는 승법모형 level = 예측신뢰수준, initial = ‘optimal’은 EST방법 초깃값 ‘simple’은 을 초깃값으로 지정, exponentail = TRUE이면 지수적추세 FALSE이면 선형추세, alpha = 평활상수로 NULL이면 자동으로 추정, beta = 평활상수로 NULL 마찬가지, gamma = 평활상수로 NULL 마찬가지)
+
+
+
+
+3. Decomposition 분해법 : 각각 분해하여 분해된 각 성분을 개별적으로 예측한 후 결합시켜 다시 예측
+단점 : 이상점 있으면 부적절, 시간에 따라 계절주기가 변하는 경우도 사용 불가능
+
+가법 모형   
+승법 모형   
+
+원자료 분해시 이동평균 사용
+대칭이동평균 : m이 홀수
+중심화 이동평균 : m이 짝수
+
+libarary(fpp) # 분해법
+stl(시계열객체, s.window = ‘periodic’이면 주기를 나타내는 것으로 분리)
+
+
