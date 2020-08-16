@@ -6,14 +6,15 @@ author : Lee Chungpa
 
 # Statistics documentary
 
+### 1. 통계학 이론
 
-1. data mining
-
-    - [test](data_mining/data_mining.html)
+[수리통계학2](theory/mathematical_statistics/수리통계학%20공식%20정리.html)
     
-    - [test](data_mining/data_mining.html)
+[범주형 자료분석](theory/categorical_analysis/범주형자료분석%20정리.html)
 
+[시계열 자료분석(test)](time/time_series.html)
 
-1. time seiries
+### 2. 데이터 마이닝
 
-    - [test](time/time_series.html)
+[이론](data_mining/data_mining.html)
+
