@@ -1,6 +1,6 @@
 # Statistics
 
-Github Page for Statistics and Data Science documentary
+Github Page for Statistics and Data Science documentary (준비중)
 
 [https://leechungpa.github.io/Statistics/](https://leechungpa.github.io/Statistics/)
 
